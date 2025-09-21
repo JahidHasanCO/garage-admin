@@ -5,18 +5,16 @@ final class AppRouter {
   /// * Prevents instance duplication based on initialLocation.
   factory AppRouter({String? initialLocation}) =>
       initialLocation == _instance?.initialLocation
-          ? _instance ??= AppRouter._(initialLocation: initialLocation)
-          : _instance = AppRouter._(initialLocation: initialLocation);
+      ? _instance ??= AppRouter._(initialLocation: initialLocation)
+      : _instance = AppRouter._(initialLocation: initialLocation);
 
   AppRouter._({this.initialLocation})
-      : config = GoRouter(
-          //-- Register routes
-          routes: _routes ??= <RouteBase>[
-
-          ],
-          initialLocation: initialLocation,
-          navigatorKey: _rootNavigatorKey ??= GlobalKey<NavigatorState>(),
-        );
+    : config = GoRouter(
+        //-- Register routes
+        routes: _routes ??= <RouteBase>[LoginPage.route],
+        initialLocation: initialLocation,
+        navigatorKey: _rootNavigatorKey ??= GlobalKey<NavigatorState>(),
+      );
 
   static AppRouter? _instance;
   final String? initialLocation;
