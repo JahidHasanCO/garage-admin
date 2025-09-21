@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:garage_admin/routes/router.dart';
 
@@ -96,9 +97,7 @@ class _SignupFormState extends State<SignupForm> {
 
         const SizedBox(height: 20),
 
-        // Terms and Conditions Checkbox
         Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Checkbox(
               value: _agreedToTerms,
@@ -117,11 +116,25 @@ class _SignupFormState extends State<SignupForm> {
                     _agreedToTerms = !_agreedToTerms;
                   });
                 },
-                child: const Padding(
-                  padding: EdgeInsets.only(top: 12.0),
-                  child: Text(
-                    'By proceeding, you agree to the Terms and Conditions',
-                    style: TextStyle(fontSize: 14, color: AppColors.primary),
+                child: RichText(
+                  text: TextSpan(
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: AppColors.textSubtitleColor,
+                    ),
+                    children: [
+                      const TextSpan(
+                        text: 'By proceeding, you agree to the ',
+                      ),
+                      TextSpan(
+                        text: 'Terms and Conditions',
+                        style: const TextStyle(
+                          color: AppColors.primary,
+                          decoration: TextDecoration.underline,
+                        ),
+                        recognizer: TapGestureRecognizer()..onTap = () {},
+                      ),
+                    ],
                   ),
                 ),
               ),
