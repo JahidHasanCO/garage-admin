@@ -8,7 +8,7 @@ class SignupScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.primary.withValues(alpha: 0.35),
+      backgroundColor: AppColors.backgroundColor,
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 500),
@@ -19,7 +19,7 @@ class SignupScreen extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 20),
                   child: Image.asset(
-                    'assets/images/logo_black.png',
+                    'assets/images/logo.png',
                     width: 150,
                     height: 150,
                     fit: BoxFit.contain,
