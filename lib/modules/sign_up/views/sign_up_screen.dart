@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:garage_admin/theme/app_colors.dart';
-import 'package:garage_admin/modules/login/login.dart';
+import 'package:garage_admin/modules/sign_up/sign_up.dart';
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+class SignupScreen extends StatelessWidget {
+  const SignupScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -14,8 +14,9 @@ class LoginScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              // Logo at top center
               Padding(
-                padding: EdgeInsets.only(bottom: 20.0),
+                padding: const EdgeInsets.only(bottom: 40.0),
                 child: Image.asset(
                   'assets/images/logo_black.png',
                   width: 150,
@@ -23,7 +24,7 @@ class LoginScreen extends StatelessWidget {
                   fit: BoxFit.contain,
                 ),
               ),
-              // White container with login form
+              // White container with signup form
               Container(
                 width: 400,
                 padding: const EdgeInsets.all(32.0),
@@ -39,7 +40,7 @@ class LoginScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: const LoginForm(),
+                child: const SignupForm(),
               ),
             ],
           ),
