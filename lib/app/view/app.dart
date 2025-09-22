@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:garage_admin/routes/router.dart';
+import 'package:garage_admin/shared/services/network/api_client.dart';
 import 'package:garage_admin/theme/app_themes.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -18,7 +19,7 @@ class _MyAppState extends ConsumerState<MyApp> {
     final initialLocation = RouteNames.login.asPath;
 
     final router = AppRouter(initialLocation: initialLocation);
-
+    ApiClient(isNewIns: true);
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: 'Garage Admin',

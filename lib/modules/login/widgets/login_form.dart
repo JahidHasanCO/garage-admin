@@ -1,21 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:garage_admin/core/provider/provider.dart';
 import 'package:garage_admin/routes/router.dart';
 import 'package:garage_admin/shared/shared.dart';
 import 'package:garage_admin/theme/app_colors.dart';
 
-class LoginForm extends StatefulWidget {
+class LoginForm extends ConsumerStatefulWidget {
   const LoginForm({super.key});
 
   @override
-  State<LoginForm> createState() => _LoginFormState();
+  ConsumerState<LoginForm> createState() => _LoginFormState();
 }
 
-class _LoginFormState extends State<LoginForm> {
+class _LoginFormState extends ConsumerState<LoginForm> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
   @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final notifier = ref.read(loginProvider.notifier);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -55,9 +65,19 @@ class _LoginFormState extends State<LoginForm> {
         const SizedBox(height: 24),
 
         // Login Button
-        CustomButton(
-          text: 'Login',
-          onPressed: () => context.go(RouteNames.dashboard.asPath),
+        ProviderSelector(
+          provider: loginProvider,
+          selector: (value) => value.status,
+          builder: (context, status) {
+            return CustomButton(
+              text: 'Login',
+              isLoading: status.isLoading,
+              onPressed: () => notifier.login(
+                _emailController.text.trim(),
+                _passwordController.text.trim(),
+              ),
+            );
+          },
         ),
 
         const SizedBox(height: 24),
@@ -86,12 +106,5 @@ class _LoginFormState extends State<LoginForm> {
         ),
       ],
     );
-  }
-
-  @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
   }
 }

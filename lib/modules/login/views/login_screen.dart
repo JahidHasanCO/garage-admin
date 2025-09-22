@@ -1,13 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:garage_admin/core/provider/provider.dart';
+import 'package:garage_admin/data/enums/state_status.dart';
 import 'package:garage_admin/modules/login/login.dart';
+import 'package:garage_admin/modules/login/providers/login_state.dart';
+import 'package:garage_admin/routes/router.dart';
 import 'package:garage_admin/theme/app_colors.dart';
 import 'package:garage_admin/theme/app_gaps.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends ConsumerWidget {
   const LoginScreen({super.key});
 
+  void _listenMessage(BuildContext context, WidgetRef ref) {
+    ref.listen<LoginState>(loginProvider, (previous, next) {
+      if (next.status == StateStatus.error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(next.message),
+            backgroundColor: Colors.red,
+          ),
+        );
+      } else if (next.status == StateStatus.success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(next.message),
+            backgroundColor: Colors.green,
+          ),
+        );
+        context.go(RouteNames.dashboard.asPath);
+      }
+    });
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    _listenMessage(context, ref);
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
       body: Center(
