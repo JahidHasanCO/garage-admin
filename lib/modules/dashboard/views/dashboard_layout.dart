@@ -13,13 +13,37 @@ class _DashboardLayoutState extends State<DashboardLayout> {
   int selectedIndex = 0;
 
   final List<MenuItem> menuItems = [
-    const MenuItem('Dashboard', 'assets/icons/dashboard.svg', DashboardScreen()),
-    const MenuItem('Inventory', 'assets/icons/inventory.svg', DashboardScreen()),
-    const MenuItem('Repair Tracker', 'assets/icons/tool.svg', DashboardScreen()),
-    const MenuItem('Customers', 'assets/icons/customers.svg', DashboardScreen()),
+    const MenuItem(
+      'Dashboard',
+      'assets/icons/dashboard.svg',
+      DashboardScreen(),
+    ),
+    const MenuItem(
+      'Inventory',
+      'assets/icons/inventory.svg',
+      DashboardScreen(),
+    ),
+    const MenuItem(
+      'Repair Tracker',
+      'assets/icons/tool.svg',
+      DashboardScreen(),
+    ),
+    const MenuItem(
+      'Customers',
+      'assets/icons/customers.svg',
+      DashboardScreen(),
+    ),
     const MenuItem('Bookings', 'assets/icons/calendar.svg', DashboardScreen()),
-    const MenuItem('Diagnostics', 'assets/icons/lightbulb.svg', DashboardScreen()),
-    const MenuItem('Staff Management', 'assets/icons/staff.svg', DashboardScreen()),
+    const MenuItem(
+      'Diagnostics',
+      'assets/icons/lightbulb.svg',
+      DashboardScreen(),
+    ),
+    const MenuItem(
+      'Staff Management',
+      'assets/icons/staff.svg',
+      DashboardScreen(),
+    ),
   ];
 
   @override
@@ -35,9 +59,11 @@ class _DashboardLayoutState extends State<DashboardLayout> {
             },
           ),
           Expanded(
-            child: Container(
-              color: Colors.grey[100],
-              child: menuItems[selectedIndex].screen,
+            child: Column(
+              children: [
+                CustomAppBar(title: menuItems[selectedIndex].title),
+                menuItems[selectedIndex].screen,
+              ],
             ),
           ),
         ],
