@@ -38,7 +38,7 @@ class SideMenuWidget extends StatelessWidget {
               itemBuilder: (context, index) {
                 final item = items[index];
                 return SideMenuItem(
-                  icon: item.icon,
+                  icon: item.iconPath,
                   text: item.title,
                   isSelected: selectedIndex == index,
                   onTap: () => onItemSelected(index),

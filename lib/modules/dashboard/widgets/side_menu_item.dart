@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:garage_admin/theme/app_colors.dart';
 
 class SideMenuItem extends StatelessWidget {
   const SideMenuItem({
@@ -9,7 +11,7 @@ class SideMenuItem extends StatelessWidget {
     super.key,
   });
 
-  final IconData icon;
+  final String icon;
   final String text;
   final bool isSelected;
   final VoidCallback onTap;
@@ -20,31 +22,30 @@ class SideMenuItem extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 8),
         decoration: BoxDecoration(
-          color: isSelected
-              ? primary.withValues(alpha: 0.1)
-              : Colors.transparent,
-          border: isSelected
-              ? Border(
-                  left: BorderSide(color: primary, width: 4),
-                )
-              : null,
+          color: isSelected ? primary : Colors.transparent,
+          borderRadius: BorderRadius.circular(8),
         ),
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
         child: Row(
           children: [
-            Icon(
+            SvgPicture.asset(
               icon,
-              color: isSelected ? primary : Colors.grey[700],
+              width: 20,
+              height: 20,
+              colorFilter: ColorFilter.mode(
+                isSelected ? AppColors.textTitleColor : AppColors.primary,
+                BlendMode.srcIn,
+              ),
             ),
-
             const SizedBox(width: 12),
             Expanded(
               child: Text(
                 text,
                 style: TextStyle(
-                  color: isSelected ? primary : Colors.black87,
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                  color: AppColors.textTitleColor,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                 ),
               ),
             ),

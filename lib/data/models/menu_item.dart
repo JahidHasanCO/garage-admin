@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class MenuItem {
-  const MenuItem(this.title, this.icon, this.screen);
+  const MenuItem(this.title, this.iconPath, this.screen);
 
   final String title;
-  final IconData icon;
+  final String iconPath;
   final Widget screen;
 }

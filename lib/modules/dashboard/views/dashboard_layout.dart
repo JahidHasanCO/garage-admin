@@ -13,13 +13,13 @@ class _DashboardLayoutState extends State<DashboardLayout> {
   int selectedIndex = 0;
 
   final List<MenuItem> menuItems = [
-    const MenuItem('Dashboard', Icons.dashboard, DashboardScreen()),
-    const MenuItem('Inventory', Icons.inventory_2, DashboardScreen()),
-    const MenuItem('Repair Tracker', Icons.build, DashboardScreen()),
-    const MenuItem('Customers', Icons.people, DashboardScreen()),
-    const MenuItem('Bookings', Icons.calendar_today, DashboardScreen()),
-    const MenuItem('Diagnostics', Icons.analytics, DashboardScreen()),
-    const MenuItem('Staff Management', Icons.manage_accounts, DashboardScreen()),
+    const MenuItem('Dashboard', 'assets/icons/dashboard.svg', DashboardScreen()),
+    const MenuItem('Inventory', 'assets/icons/inventory.svg', DashboardScreen()),
+    const MenuItem('Repair Tracker', 'assets/icons/tool.svg', DashboardScreen()),
+    const MenuItem('Customers', 'assets/icons/customers.svg', DashboardScreen()),
+    const MenuItem('Bookings', 'assets/icons/calendar.svg', DashboardScreen()),
+    const MenuItem('Diagnostics', 'assets/icons/lightbulb.svg', DashboardScreen()),
+    const MenuItem('Staff Management', 'assets/icons/staff.svg', DashboardScreen()),
   ];
 
   @override
