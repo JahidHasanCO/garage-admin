@@ -4,6 +4,7 @@ import 'package:garage_admin/theme/theme.dart';
 
 ThemeData appTheme() {
   return ThemeData(
+    fontFamily: 'Roboto',
     scaffoldBackgroundColor: AppColors.whiteColor,
     primaryColor: AppColors.primary,
     colorScheme: const ColorScheme(
@@ -39,7 +40,7 @@ AppBarTheme appBarTheme() {
     titleTextStyle: TextStyle(
       color: AppColors.textTitleColor,
       fontSize: 16,
-      fontFamily: 'Inter',
+      fontFamily: 'Roboto',
       fontWeight: FontWeight.w600,
     ),
   );
@@ -66,7 +67,7 @@ OutlinedButtonThemeData outlinedButtonTheme() {
       textStyle: WidgetStateProperty.all(
         const TextStyle(
           fontSize: 16,
-          fontFamily: 'Inter',
+          fontFamily: 'Roboto',
           fontWeight: FontWeight.w500,
         ),
       ),
