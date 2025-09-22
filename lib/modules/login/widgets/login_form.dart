@@ -57,11 +57,7 @@ class _LoginFormState extends State<LoginForm> {
         // Login Button
         CustomButton(
           text: 'Login',
-          onPressed: () {
-            // Handle login logic here
-            print('Email: ${_emailController.text}');
-            print('Password: ${_passwordController.text}');
-          },
+          onPressed: () => context.go(RouteNames.dashboard.asPath),
         ),
 
         const SizedBox(height: 24),

@@ -11,7 +11,11 @@ final class AppRouter {
   AppRouter._({this.initialLocation})
     : config = GoRouter(
         //-- Register routes
-        routes: _routes ??= <RouteBase>[LoginPage.route, SignUpPage.route],
+        routes: _routes ??= <RouteBase>[
+          LoginPage.route,
+          SignUpPage.route,
+          DashboardPage.route,
+        ],
         initialLocation: initialLocation,
         navigatorKey: _rootNavigatorKey ??= GlobalKey<NavigatorState>(),
       );

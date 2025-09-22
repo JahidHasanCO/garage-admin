@@ -14,6 +14,7 @@ dependencies:
   gap: ^3.0.1
   flutter_riverpod: ^3.0.0
   very_good_analysis: ^9.0.0
+  flutter_side_menu: ^0.5.41
 
 dev_dependencies:
   flutter_test:
