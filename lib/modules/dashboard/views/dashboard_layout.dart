@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:garage_admin/data/models/menu_item.dart';
 import 'package:garage_admin/modules/dashboard/dashboard.dart';
+import 'package:garage_admin/modules/service_catalog/service_catalog.dart';
 
 class DashboardLayout extends StatefulWidget {
   const DashboardLayout({super.key});
@@ -35,6 +36,11 @@ class _DashboardLayoutState extends State<DashboardLayout> {
     ),
     const MenuItem('Bookings', 'assets/icons/calendar.svg', DashboardScreen()),
     const MenuItem(
+      'Service Catalog',
+      'assets/icons/lightbulb.svg',
+      ServiceCatalogScreen(),
+    ),
+    const MenuItem(
       'Diagnostics',
       'assets/icons/lightbulb.svg',
       DashboardScreen(),
@@ -62,7 +68,7 @@ class _DashboardLayoutState extends State<DashboardLayout> {
             child: Column(
               children: [
                 CustomAppBar(title: menuItems[selectedIndex].title),
-                menuItems[selectedIndex].screen,
+                Expanded(child: menuItems[selectedIndex].screen),
               ],
             ),
           ),

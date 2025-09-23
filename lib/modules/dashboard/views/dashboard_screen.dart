@@ -6,14 +6,12 @@ class DashboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        color: AppColors.backgroundColor,
-        alignment: Alignment.center,
-        child: const Text(
-          'Dashboard Screen',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-        ),
+    return Container(
+      color: AppColors.backgroundColor,
+      alignment: Alignment.center,
+      child: const Text(
+        'Dashboard Screen',
+        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
       ),
     );
   }

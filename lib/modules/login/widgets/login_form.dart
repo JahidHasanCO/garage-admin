@@ -13,8 +13,10 @@ class LoginForm extends ConsumerStatefulWidget {
 }
 
 class _LoginFormState extends ConsumerState<LoginForm> {
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController(
+      text: 'admin@example.com');
+  final TextEditingController _passwordController = TextEditingController(
+      text: 'admin123');
 
   @override
   void dispose() {
@@ -72,10 +74,11 @@ class _LoginFormState extends ConsumerState<LoginForm> {
             return CustomButton(
               text: 'Login',
               isLoading: status.isLoading,
-              onPressed: () => notifier.login(
-                _emailController.text.trim(),
-                _passwordController.text.trim(),
-              ),
+              onPressed: () =>
+                  notifier.login(
+                    _emailController.text.trim(),
+                    _passwordController.text.trim(),
+                  ),
             );
           },
         ),
