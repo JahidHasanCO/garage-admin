@@ -6,7 +6,7 @@ import 'package:garage_admin/utils/extension/object.dart';
 class AuthRepo {
   final _client = ApiClient();
 
-  Future<bool> login({
+  Future<LoginResponse?> login({
     required String email,
     required String password,
   }) async {
@@ -23,16 +23,14 @@ class AuthRepo {
           response.statusCode != null &&
           response.statusCode! >= 200 &&
           response.statusCode! < 300) {
-        final data = LoginResponse.fromJson(response.data!);
-
-        return data.accessToken != null && data.user != null;
+        return LoginResponse.fromJson(response.data!);
       } else {
         response.statusCode?.doPrint(prefix: 'Login failed: ');
-        return false;
+        return null;
       }
     } on Exception catch (e) {
       e.doPrint(prefix: 'Login failed: ');
-      return false;
+      return null;
     }
   }
 }

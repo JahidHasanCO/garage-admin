@@ -53,4 +53,18 @@ class User {
   final DateTime? createdAt;
   final DateTime? updatedAt;
   final int? v;
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'email': email,
+      'password': password,
+      'refreshToken': refreshToken,
+      'roleId': roleId,
+      'createdAt': createdAt,
+      'updatedAt': updatedAt,
+      'v': v,
+    };
+  }
 }

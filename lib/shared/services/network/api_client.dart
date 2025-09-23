@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:garage_admin/core/config/app_config.dart';
 import 'package:garage_admin/shared/services/network/app_interceptors.dart';
+import 'package:garage_admin/utils/extension/object.dart';
 
 class ApiClient {
   factory ApiClient({String? accessToken, bool isNewIns = false}) {
@@ -20,6 +21,7 @@ class ApiClient {
 
 
   void _newInst(String? token, {bool isNewIns = false}) {
+    'New Instance of ApiClient created'.doPrint();
     final headers = token != null && token.isNotEmpty
         ? {
       'Content-Type': 'application/json',
