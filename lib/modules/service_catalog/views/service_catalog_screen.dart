@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:garage_admin/core/provider/provider.dart';
+import 'package:garage_admin/modules/service_catalog/service_catalog.dart';
 import 'package:garage_admin/shared/shared.dart';
 import 'package:garage_admin/theme/app_colors.dart';
 import 'package:garage_admin/utils/extension/ref.dart';
@@ -28,7 +29,7 @@ class ServiceCatalogScreenState extends ConsumerState<ServiceCatalogScreen> {
     final status = ref.select(serviceCatalogProvider, (state) => state.status);
 
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(16),
       child: Column(
         children: [
           // Table
@@ -58,53 +59,8 @@ class ServiceCatalogScreenState extends ConsumerState<ServiceCatalogScreen> {
                                   child: Text('No services available.'),
                                 );
                               }
-                              return DataTable(
-                                columns: const [
-                                  DataColumn(label: Text('Name')),
-                                  DataColumn(label: Text('Description')),
-                                  DataColumn(label: Text('Price')),
-                                  DataColumn(label: Text('Estimated Time')),
-                                  DataColumn(label: Text('Discount')),
-                                  DataColumn(label: Text('Created At')),
-                                  DataColumn(label: Text('Updated At')),
-                                ],
-                                rows: serviceList.map((service) {
-                                  return DataRow(
-                                    cells: [
-                                      DataCell(Text(service.name ?? '-')),
-                                      DataCell(
-                                        Text(
-                                          service.description ?? '-',
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                      DataCell(Text('\$${service.price ?? 0}')),
-                                      DataCell(
-                                        Text(
-                                          '${service.estimatedTime ?? 0} mins',
-                                        ),
-                                      ),
-                                      DataCell(
-                                        Text('${service.discount ?? 0}%'),
-                                      ),
-                                      DataCell(
-                                        Text(
-                                          service.createdAt
-                                                  ?.toIso8601String() ??
-                                              '-',
-                                        ),
-                                      ),
-                                      DataCell(
-                                        Text(
-                                          service.updatedAt
-                                                  ?.toIso8601String() ??
-                                              '-',
-                                        ),
-                                      ),
-                                    ],
-                                  );
-                                }).toList(),
+                              return ServiceCatalogTable(
+                                serviceList: serviceList,
                               );
                             },
                           ),
@@ -134,7 +90,7 @@ class ServiceCatalogScreenState extends ConsumerState<ServiceCatalogScreen> {
                     final pageNumber = index + 1;
                     final isCurrent = pageNumber == currentPage;
                     return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: isCurrent

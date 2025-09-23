@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:garage_admin/data/models/menu_item.dart';
 import 'package:garage_admin/modules/dashboard/dashboard.dart';
 import 'package:garage_admin/modules/service_catalog/service_catalog.dart';
+import 'package:garage_admin/theme/app_colors.dart';
 
 class DashboardLayout extends StatefulWidget {
   const DashboardLayout({super.key});
@@ -55,6 +56,7 @@ class _DashboardLayoutState extends State<DashboardLayout> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.backgroundColor,
       body: Row(
         children: [
           SideMenuWidget(
