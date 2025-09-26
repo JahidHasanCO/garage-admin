@@ -31,8 +31,7 @@ export default function PartsPage() {
     searchQuery,
     deleteLoading,
     handlePageChange,
-    // Temporarily disabled search to fix infinite loop
-    // handleSearch,
+    handleLimitChange,
     deletePart,
     refresh,
   } = usePartsData();
@@ -47,23 +46,6 @@ export default function PartsPage() {
     message: "",
     severity: "success",
   });
-
-  // Create a stable search handler to prevent infinite loops
-  // Temporarily disabled to fix infinite loop
-  // const stableHandleSearch = useCallback((query) => {
-  //   handleSearch(query);
-  // }, [handleSearch]);
-
-  // Register search handler for this page
-  // Temporarily disabled to fix infinite loop
-  // useEffect(() => {
-  //   registerSearchHandler('parts', stableHandleSearch);
-  //   
-  //   return () => {
-  //     unregisterSearchHandler('parts');
-  //   };
-  // }, [registerSearchHandler, unregisterSearchHandler, stableHandleSearch]);
-
   // Check for success message from navigation state
   useEffect(() => {
     if (location.state?.message && !location.state.cleared) {
@@ -207,10 +189,7 @@ export default function PartsPage() {
           total={pagination.total}
           limit={pagination.limit}
           onPageChange={handlePageChange}
-          onLimitChange={() => {
-            // Handle limit change - refresh the data
-            refresh();
-          }}
+          onLimitChange={handleLimitChange}
           disabled={loading}
         />
       </Box>

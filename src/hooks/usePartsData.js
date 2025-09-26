@@ -61,6 +61,11 @@ export const usePartsData = (initialSearch = "") => {
     fetchParts(newPage, paginationRef.current.limit, searchQueryRef.current);
   }, [fetchParts]);
 
+
+  const handleLimitChange = useCallback((newLimit) => {
+    fetchParts(paginationRef.current.page, newLimit, searchQueryRef.current);
+  }, [fetchParts]);
+
   // Handle search - using useCallback to prevent recreating on every render
   const handleSearch = useCallback((query) => {
     setSearchQuery(query);
@@ -100,6 +105,7 @@ export const usePartsData = (initialSearch = "") => {
     searchQuery,
     deleteLoading,
     handlePageChange,
+    handleLimitChange,
     handleSearch,
     deletePart,
     refresh,
