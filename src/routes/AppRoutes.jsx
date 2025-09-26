@@ -1,9 +1,11 @@
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "../pages/Login/LoginPage";
-import Dashboard from "../pages/Dashboard/DashboardPage";
+import DashboardLayout from "../layouts/DashboardLayout";
+import DashboardHome from "../pages/Dashboard/DashboardHome";
+import PartsPage from "../pages/Parts/PartsPage";
 import { useAuth } from "../contexts/useAuthContext";
-import {RouteNames} from "./RouteNames";
+import { RouteNames } from "./RouteNames";
 
 export default function AppRoutes() {
   const { token } = useAuth();
@@ -15,9 +17,12 @@ export default function AppRoutes() {
         element={token ? <Navigate to={RouteNames.DASHBOARD} /> : <LoginPage />} 
       />
       <Route
-        path={RouteNames.DASHBOARD}
-        element={token ? <Dashboard /> : <Navigate to={RouteNames.LOGIN} />}
-      />
+        path="/dashboard"
+        element={token ? <DashboardLayout /> : <Navigate to={RouteNames.LOGIN} />}
+      >
+        <Route index element={<DashboardHome />} />
+        <Route path="parts" element={<PartsPage />} />
+      </Route>
       <Route path="*" element={<div>404 Not Found</div>} />
     </Routes>
   );

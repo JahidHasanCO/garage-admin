@@ -1,55 +1,31 @@
+import React from "react";
+import { Outlet } from "react-router-dom";
 import {
   Box,
-  Drawer,
-  List,
-  ListItem,
-  ListItemText,
   AppBar,
   Toolbar,
-  Typography,
   InputBase,
   Avatar,
   IconButton,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import Sidebar from "../components/Sidebar";
 
 const drawerWidth = 240;
 
-export default function DashboardPage() {
+export default function DashboardLayout() {
   return (
     <Box sx={{ display: "flex", height: "100vh" }}>
       {/* Sidebar Navigation */}
-      <Drawer
-        variant="permanent"
-        sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          [`& .MuiDrawer-paper`]: {
-            width: drawerWidth,
-            boxSizing: "border-box",
-          },
-        }}
-      >
-        <Toolbar>
-          <Typography variant="h6">MyApp</Typography>
-        </Toolbar>
-        <List>
-          {["Dashboard", "Users", "Settings"].map((text) => (
-            <ListItem button key={text}>
-              <ListItemText primary={text} />
-            </ListItem>
-          ))}
-        </List>
-      </Drawer>
+      <Sidebar />
 
       {/* Main Content Area */}
       <Box
         component="main"
         sx={{
           flexGrow: 1,
-          backgroundColor: "#F3F4F6",
-          p: 3,
-          ml: `${drawerWidth}px`,
+          backgroundColor: "#f8fafc",
+          minHeight: "100vh",
         }}
       >
         {/* Top AppBar */}
@@ -60,8 +36,8 @@ export default function DashboardPage() {
             ml: `${drawerWidth}px`,
             backgroundColor: "#fff",
             color: "black",
-            boxShadow: "none",
-            borderBottom: "1px solid #E5E7EB",
+            boxShadow: "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
+            borderBottom: "1px solid #e5e7eb",
           }}
         >
           <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
@@ -70,11 +46,12 @@ export default function DashboardPage() {
               sx={{
                 display: "flex",
                 alignItems: "center",
-                backgroundColor: "#F3F4F6",
+                backgroundColor: "#f3f4f6",
                 px: 2,
                 py: 0.5,
                 borderRadius: 2,
                 width: "50%",
+                maxWidth: 400,
               }}
             >
               <SearchIcon color="action" />
@@ -87,7 +64,11 @@ export default function DashboardPage() {
 
             {/* User Avatar */}
             <IconButton>
-              <Avatar alt="Admin User" src="/images/avatar.png" />
+              <Avatar 
+                alt="Admin User" 
+                src="/images/avatar.png"
+                sx={{ width: 32, height: 32 }}
+              />
             </IconButton>
           </Toolbar>
         </AppBar>
@@ -95,14 +76,8 @@ export default function DashboardPage() {
         {/* Push content below AppBar */}
         <Toolbar />
 
-        {/* Example content */}
-        <Typography variant="h4" gutterBottom>
-          Welcome to the Dashboard
-        </Typography>
-        <Typography>
-          Here’s where your main content will go. You can replace this with
-          charts, tables, or widgets.
-        </Typography>
+        {/* Route Content */}
+        <Outlet />
       </Box>
     </Box>
   );
