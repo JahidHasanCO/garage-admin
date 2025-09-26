@@ -7,7 +7,7 @@ import { API_URL } from "../constants/api.js";
 export const login = async (email, password) => {
   try {
     const response = await axios.post(`${API_URL}/auth/admin/login`, { email, password });
-    return response.data; // { user: {}, token: "" }
+    return response.data;
   } catch (error) {
     // Throw a formatted error message
     if (error.response && error.response.data) {

@@ -6,10 +6,12 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem("token") || null);
 
   const login = (data) => {
+
     setUser(data.user);
-    setToken(data.token);
-    console.log("Storing token in localStorage:", data.token);
-    localStorage.setItem("token", data.token);
+    setToken(data.accessToken);
+    console.log("Storing token in localStorage:", data.accessToken);
+    localStorage.setItem("token", data.accessToken);
+    localStorage.setItem("user", JSON.stringify(data.user));
   };
 
   const logout = () => {
