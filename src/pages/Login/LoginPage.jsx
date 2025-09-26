@@ -14,7 +14,7 @@ export default function LoginPage() {
       }}
     >
       <Box sx={{ textAlign: "center", mb: 2 }}>
-        <img src="/logo.png" alt="Logo" width={150} />
+        <img src="/images/logo.png" alt="Logo" width={150} height={150} />
       </Box>
 
       <Card sx={{ width: 400, p: 3, borderRadius: 2, boxShadow: 3 }}>

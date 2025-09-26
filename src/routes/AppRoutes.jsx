@@ -2,7 +2,7 @@ import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "../pages/Login/LoginPage";
 import Dashboard from "../pages/Dashboard/DashboardPage";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../contexts/useAuthContext";
 
 export default function AppRoutes() {
   const { token } = useAuth();

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import InputField from "../../components/InputField";
 import Button from "../../components/Button";
 import AlertMessage from "../../components/AlertMessage";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuth } from "../../contexts/useAuthContext";
 import { login as loginApi } from "../../api/auth";
 
 export default function LoginForm() {
