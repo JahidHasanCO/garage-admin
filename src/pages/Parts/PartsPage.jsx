@@ -2,37 +2,17 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   Box,
-  Typography,
-  Card,
-  CardContent,
-  Grid,
   Button,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  CircularProgress,
   Alert,
-  Chip,
-  Avatar,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
   Snackbar,
 } from "@mui/material";
-import { 
-  Add as AddIcon, 
-  Edit as EditIcon, 
-  Delete as DeleteIcon,
-  Image as ImageIcon,
-} from "@mui/icons-material";
+import { Add as AddIcon } from "@mui/icons-material";
 import { usePartsData } from "../../hooks/usePartsData";
 import PaginationControls from "../../components/PaginationControls";
+import PageHeader from "../../components/PageHeader";
+import StatsGrid from "../../components/StatsGrid";
+import PartsTable from "../../components/PartsTable";
+import DeleteConfirmDialog from "../../components/DeleteConfirmDialog";
 // Temporarily disabled search integration to fix infinite loop
 // import { useSearch } from "../../contexts/useSearchContext";
 
@@ -85,7 +65,7 @@ export default function PartsPage() {
   // }, [registerSearchHandler, unregisterSearchHandler, stableHandleSearch]);
 
   // Check for success message from navigation state
-  React.useEffect(() => {
+  useEffect(() => {
     if (location.state?.message && !location.state.cleared) {
       setSnackbar({
         open: true,
@@ -142,20 +122,42 @@ export default function PartsPage() {
     setSnackbar({ ...snackbar, open: false });
   };
 
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(price);
-  };
+  // Prepare stats data
+  const statsData = [
+    {
+      title: "Total Parts",
+      value: pagination.total,
+    },
+    {
+      title: "Current Page", 
+      value: pagination.page,
+    },
+    {
+      title: "Total Pages",
+      value: pagination.pages,
+    },
+    {
+      title: "Per Page",
+      value: pagination.limit,
+    },
+  ];
 
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
-  };
+  // Prepare action button for header
+  const actionButton = (
+    <Button
+      variant="contained"
+      startIcon={<AddIcon />}
+      onClick={handleAddPart}
+      sx={{
+        backgroundColor: "#3b82f6",
+        "&:hover": {
+          backgroundColor: "#2563eb",
+        },
+      }}
+    >
+      Add New Part
+    </Button>
+  );
 
   if (error) {
     return (
@@ -178,266 +180,49 @@ export default function PartsPage() {
   return (
     <Box sx={{ p: 3 }}>
       {/* Header */}
-      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
-        <Typography variant="h4" component="h1" sx={{ fontWeight: "bold" }}>
-          Parts Management
-        </Typography>
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          onClick={handleAddPart}
-          sx={{
-            backgroundColor: "#3b82f6",
-            "&:hover": {
-              backgroundColor: "#2563eb",
-            },
-          }}
-        >
-          Add New Part
-        </Button>
-      </Box>
+      <PageHeader 
+        title="Parts Management"
+        actionButton={actionButton}
+      />
 
       {/* Stats Cards */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid item xs={12} sm={6} md={3}>
-          <Card>
-            <CardContent>
-              <Typography color="textSecondary" gutterBottom>
-                Total Parts
-              </Typography>
-              <Typography variant="h4" component="div">
-                {loading ? <CircularProgress size={30} /> : pagination.total}
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <Card>
-            <CardContent>
-              <Typography color="textSecondary" gutterBottom>
-                Current Page
-              </Typography>
-              <Typography variant="h4" component="div">
-                {loading ? <CircularProgress size={30} /> : pagination.page}
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <Card>
-            <CardContent>
-              <Typography color="textSecondary" gutterBottom>
-                Total Pages
-              </Typography>
-              <Typography variant="h4" component="div">
-                {loading ? <CircularProgress size={30} /> : pagination.pages}
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <Card>
-            <CardContent>
-              <Typography color="textSecondary" gutterBottom>
-                Per Page
-              </Typography>
-              <Typography variant="h4" component="div">
-                {loading ? <CircularProgress size={30} /> : pagination.limit}
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
+      <StatsGrid stats={statsData} loading={loading} />
 
       {/* Parts Table */}
-      <Card>
-        <CardContent>
-          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
-            <Typography variant="h6" component="h2">
-              Parts Inventory
-            </Typography>
-            {searchQuery && (
-              <Typography variant="body2" color="text.secondary">
-                Search results for: "{searchQuery}"
-              </Typography>
-            )}
-          </Box>
+      <PartsTable
+        parts={parts}
+        loading={loading}
+        searchQuery={searchQuery}
+        deleteLoading={deleteLoading}
+        onEdit={handleEditPart}
+        onDelete={handleDeleteClick}
+        onAddPart={handleAddPart}
+      />
 
-          <TableContainer component={Paper} sx={{ boxShadow: "none" }}>
-            <Table>
-              <TableHead>
-                <TableRow sx={{ backgroundColor: "#f8fafc" }}>
-                  <TableCell sx={{ fontWeight: "bold" }}>Image</TableCell>
-                  <TableCell sx={{ fontWeight: "bold" }}>Part Name</TableCell>
-                  <TableCell sx={{ fontWeight: "bold" }}>SKU</TableCell>
-                  <TableCell sx={{ fontWeight: "bold" }}>Price</TableCell>
-                  <TableCell sx={{ fontWeight: "bold" }}>Created</TableCell>
-                  <TableCell sx={{ fontWeight: "bold" }}>Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {loading ? (
-                  <TableRow>
-                    <TableCell colSpan={6} align="center" sx={{ py: 4 }}>
-                      <CircularProgress size={40} />
-                      <Typography variant="body2" sx={{ mt: 2 }}>
-                        Loading parts...
-                      </Typography>
-                    </TableCell>
-                  </TableRow>
-                ) : parts.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={6} align="center" sx={{ py: 4 }}>
-                      <Typography variant="h6" color="text.secondary">
-                        {searchQuery ? "No parts found matching your search" : "No parts available"}
-                      </Typography>
-                      {!searchQuery && (
-                        <Button
-                          variant="outlined"
-                          startIcon={<AddIcon />}
-                          onClick={handleAddPart}
-                          sx={{ mt: 2 }}
-                        >
-                          Add Your First Part
-                        </Button>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  parts.map((part) => (
-                    <TableRow key={part._id} hover>
-                      <TableCell>
-                        {part.image ? (
-                          <Avatar
-                            src={part.image}
-                            alt={part.name}
-                            sx={{ width: 50, height: 50 }}
-                            variant="rounded"
-                          />
-                        ) : (
-                          <Avatar sx={{ width: 50, height: 50 }} variant="rounded">
-                            <ImageIcon />
-                          </Avatar>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <Typography sx={{ fontWeight: "medium", mb: 0.5 }}>
-                          {part.name}
-                        </Typography>
-                        {part.description && (
-                          <Typography variant="body2" color="text.secondary">
-                            {part.description.length > 50
-                              ? `${part.description.substring(0, 50)}...`
-                              : part.description}
-                          </Typography>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        {part.sku ? (
-                          <Chip
-                            label={part.sku}
-                            size="small"
-                            sx={{
-                              backgroundColor: "#e0f2fe",
-                              color: "#0277bd",
-                              fontWeight: "medium",
-                            }}
-                          />
-                        ) : (
-                          <Typography variant="body2" color="text.secondary">
-                            No SKU
-                          </Typography>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <Typography sx={{ fontWeight: "medium", color: "#10b981" }}>
-                          {formatPrice(part.price)}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="body2" color="text.secondary">
-                          {formatDate(part.createdAt)}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Box sx={{ display: "flex", gap: 1 }}>
-                          <Button
-                            size="small"
-                            startIcon={<EditIcon />}
-                            onClick={() => handleEditPart(part._id)}
-                            sx={{ minWidth: "auto" }}
-                          >
-                            Edit
-                          </Button>
-                          <Button
-                            size="small"
-                            color="error"
-                            startIcon={
-                              deleteLoading === part._id ? (
-                                <CircularProgress size={16} />
-                              ) : (
-                                <DeleteIcon />
-                              )
-                            }
-                            onClick={() => handleDeleteClick(part)}
-                            disabled={deleteLoading === part._id}
-                            sx={{ minWidth: "auto" }}
-                          >
-                            Delete
-                          </Button>
-                        </Box>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
-
-          {/* Pagination */}
-          <PaginationControls
-            page={pagination.page}
-            pages={pagination.pages}
-            total={pagination.total}
-            limit={pagination.limit}
-            onPageChange={handlePageChange}
-            onLimitChange={() => {
-              // Handle limit change - refresh the data
-              refresh();
-            }}
-            disabled={loading}
-          />
-        </CardContent>
-      </Card>
+      {/* Pagination */}
+      <Box sx={{ mt: 2 }}>
+        <PaginationControls
+          page={pagination.page}
+          pages={pagination.pages}
+          total={pagination.total}
+          limit={pagination.limit}
+          onPageChange={handlePageChange}
+          onLimitChange={() => {
+            // Handle limit change - refresh the data
+            refresh();
+          }}
+          disabled={loading}
+        />
+      </Box>
 
       {/* Delete Confirmation Dialog */}
-      <Dialog
+      <DeleteConfirmDialog
         open={deleteDialog.open}
-        onClose={handleDeleteCancel}
-        maxWidth="sm"
-        fullWidth
-      >
-        <DialogTitle>Delete Part</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Are you sure you want to delete "{deleteDialog.part?.name}"?
-            This action cannot be undone.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDeleteCancel} color="inherit">
-            Cancel
-          </Button>
-          <Button
-            onClick={handleDeleteConfirm}
-            color="error"
-            variant="contained"
-            autoFocus
-          >
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
+        title="Delete Part"
+        itemName={deleteDialog.part?.name}
+        onConfirm={handleDeleteConfirm}
+        onCancel={handleDeleteCancel}
+      />
 
       {/* Success/Error Snackbar */}
       <Snackbar
