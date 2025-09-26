@@ -4,6 +4,7 @@ import LoginPage from "../pages/Login/LoginPage";
 import DashboardLayout from "../layouts/DashboardLayout";
 import DashboardHome from "../pages/Dashboard/DashboardHome";
 import PartsPage from "../pages/Parts/PartsPage";
+import AddEditPartPage from "../pages/Parts/AddEditPartPage";
 import { useAuth } from "../contexts/useAuthContext";
 import { RouteNames } from "./RouteNames";
 
@@ -22,6 +23,8 @@ export default function AppRoutes() {
       >
         <Route index element={<DashboardHome />} />
         <Route path="parts" element={<PartsPage />} />
+        <Route path="parts/add" element={<AddEditPartPage />} />
+        <Route path="parts/edit/:id" element={<AddEditPartPage />} />
       </Route>
       <Route path="*" element={<div>404 Not Found</div>} />
     </Routes>

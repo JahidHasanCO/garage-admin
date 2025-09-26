@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Typography,
@@ -14,7 +15,7 @@ import {
   TableRow,
   Paper,
 } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
+import { Add as AddIcon, Edit as EditIcon } from "@mui/icons-material";
 
 // Sample parts data
 const partsData = [
@@ -26,6 +27,16 @@ const partsData = [
 ];
 
 export default function PartsPage() {
+  const navigate = useNavigate();
+
+  const handleAddPart = () => {
+    navigate("/dashboard/parts/add");
+  };
+
+  const handleEditPart = (partId) => {
+    navigate(`/dashboard/parts/edit/${partId}`);
+  };
+
   return (
     <Box sx={{ p: 3 }}>
       {/* Header */}
@@ -36,6 +47,7 @@ export default function PartsPage() {
         <Button
           variant="contained"
           startIcon={<AddIcon />}
+          onClick={handleAddPart}
           sx={{
             backgroundColor: "#3b82f6",
             "&:hover": {
@@ -150,7 +162,12 @@ export default function PartsPage() {
                     </TableCell>
                     <TableCell sx={{ fontWeight: "medium" }}>{part.price}</TableCell>
                     <TableCell>
-                      <Button size="small" sx={{ mr: 1 }}>
+                      <Button 
+                        size="small" 
+                        sx={{ mr: 1 }}
+                        startIcon={<EditIcon />}
+                        onClick={() => handleEditPart(part.id)}
+                      >
                         Edit
                       </Button>
                       <Button size="small" color="error">
