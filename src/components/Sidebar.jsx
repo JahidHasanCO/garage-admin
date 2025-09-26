@@ -11,7 +11,7 @@ import {
     IconButton,
     Tooltip,
 } from "@mui/material";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import BuildIcon from "@mui/icons-material/Build";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -36,13 +36,8 @@ const menuItems = [
 ];
 
 export default function Sidebar() {
-    const navigate = useNavigate();
     const location = useLocation();
     const { collapsed, setCollapsed } = useSidebar();
-
-    const handleNavigation = (path) => {
-        navigate(path);
-    };
 
     const toggleSidebar = () => {
         setCollapsed(!collapsed);
@@ -101,44 +96,48 @@ export default function Sidebar() {
                             placement="right"
                             arrow
                         >
-                            <ListItem
-                                button
-                                onClick={() => handleNavigation(item.path)}
-                                sx={{
-                                    mb: 0.5,
-                                    borderRadius: 2,
-                                    minHeight: 48,
-                                    backgroundColor: isSelected ? AppColors.primary : "transparent",
-                                    color: isSelected ? "white" : "#000000",
-                                    justifyContent: collapsed ? "center" : "flex-start",
-                                    px: collapsed ? 1 : 2,
-                                    "&:hover": {
-                                        backgroundColor: isSelected ? AppColors.primaryDeep : AppColors.grayLightColor,
-                                    },
-                                }}
+                            <Link
+                                to={item.path}
+                                style={{ textDecoration: 'none', color: 'inherit' }}
                             >
-                                <ListItemIcon
+                                <ListItem
+                                    button
                                     sx={{
-                                        color: "black",
-                                        minWidth: collapsed ? "auto" : 40,
-                                        justifyContent: "center",
+                                        mb: 0.5,
+                                        borderRadius: 2,
+                                        minHeight: 48,
+                                        backgroundColor: isSelected ? AppColors.primary : "transparent",
+                                        color: isSelected ? "white" : "#000000",
+                                        justifyContent: collapsed ? "center" : "flex-start",
+                                        px: collapsed ? 1 : 2,
+                                        "&:hover": {
+                                            backgroundColor: isSelected ? AppColors.primaryDeep : AppColors.grayLightColor,
+                                        },
                                     }}
                                 >
-                                    {item.icon}
-                                </ListItemIcon>
-                                {!collapsed && (
-                                    <ListItemText
-                                        primary={item.text}
+                                    <ListItemIcon
                                         sx={{
-                                            "& .MuiTypography-root": {
-                                                color: "black",
-                                                fontWeight: isSelected ? "bold" : "normal",
-                                                fontSize: "0.95rem",
-                                            }
+                                            color: "black",
+                                            minWidth: collapsed ? "auto" : 40,
+                                            justifyContent: "center",
                                         }}
-                                    />
-                                )}
-                            </ListItem>
+                                    >
+                                        {item.icon}
+                                    </ListItemIcon>
+                                    {!collapsed && (
+                                        <ListItemText
+                                            primary={item.text}
+                                            sx={{
+                                                "& .MuiTypography-root": {
+                                                    color: "black",
+                                                    fontWeight: isSelected ? "bold" : "normal",
+                                                    fontSize: "0.95rem",
+                                                }
+                                            }}
+                                        />
+                                    )}
+                                </ListItem>
+                            </Link>
                         </Tooltip>
                     );
                 })}

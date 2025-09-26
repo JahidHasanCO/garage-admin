@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { Outlet } from "react-router-dom";
 import {
   Box,
@@ -11,13 +11,19 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import Sidebar from "../components/Sidebar";
 import { useSidebar } from "../contexts/useSidebarContext";
+import { useSearch } from "../contexts/useSearchContext";
 
 const drawerWidth = 240;
 const collapsedWidth = 64;
 
 export default function DashboardLayout() {
   const { collapsed } = useSidebar();
+  const { searchQuery, handleGlobalSearch } = useSearch();
   const currentWidth = collapsed ? collapsedWidth : drawerWidth;
+
+  const handleSearchChange = useCallback((e) => {
+    handleGlobalSearch(e.target.value);
+  }, [handleGlobalSearch]);
 
   return (
     <Box sx={{ display: "flex", height: "100vh" }}>
@@ -64,6 +70,8 @@ export default function DashboardLayout() {
               <SearchIcon color="action" />
               <InputBase
                 placeholder="Search…"
+                value={searchQuery}
+                onChange={handleSearchChange}
                 sx={{ ml: 1, flex: 1 }}
                 inputProps={{ "aria-label": "search" }}
               />
@@ -84,7 +92,9 @@ export default function DashboardLayout() {
         <Toolbar />
 
         {/* Route Content */}
-        <Outlet />
+        <Box sx={{ p: 1 }}>
+          <Outlet />
+        </Box>
       </Box>
     </Box>
   );

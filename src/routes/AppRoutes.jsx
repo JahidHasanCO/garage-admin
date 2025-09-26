@@ -26,6 +26,7 @@ export default function AppRoutes() {
         <Route path="parts/add" element={<AddEditPartPage />} />
         <Route path="parts/edit/:id" element={<AddEditPartPage />} />
       </Route>
+      <Route path="/" element={<Navigate to="/dashboard" replace />} />
       <Route path="*" element={<div>404 Not Found</div>} />
     </Routes>
   );
