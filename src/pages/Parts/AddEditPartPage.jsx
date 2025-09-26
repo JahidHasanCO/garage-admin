@@ -70,7 +70,7 @@ export default function AddEditPartPage() {
     await handleSubmit(
       () => {
         // Success callback
-        navigate("/dashboard/parts", {
+        navigate("/parts", {
           state: {
             message: `Part ${isEditMode ? "updated" : "created"} successfully!`,
             severity: "success"
@@ -85,7 +85,7 @@ export default function AddEditPartPage() {
   };
 
   const handleCancel = () => {
-    navigate("/dashboard/parts");
+    navigate("/parts");
   };
 
   const handleReset = () => {
@@ -112,7 +112,7 @@ export default function AddEditPartPage() {
         <Button
           variant="outlined"
           startIcon={<ArrowBackIcon />}
-          onClick={() => navigate("/dashboard/parts")}
+          onClick={() => navigate("/parts")}
         >
           Back to Parts
         </Button>
@@ -140,7 +140,7 @@ export default function AddEditPartPage() {
           href="#"
           onClick={(e) => {
             e.preventDefault();
-            navigate("/dashboard/parts");
+            navigate("/parts");
           }}
           sx={{ textDecoration: "none" }}
         >

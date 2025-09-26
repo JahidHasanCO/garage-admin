@@ -1,7 +1,7 @@
 export const RouteNames = {
     LOGIN: "/",
     DASHBOARD: "/dashboard",
-    PARTS: "/dashboard/parts",
-    ADD_PART: "/dashboard/parts/add",
-    EDIT_PART: "/dashboard/parts/edit/:id",
+    PARTS: "/parts",
+    ADD_PART: "/parts/add",
+    EDIT_PART: "/parts/edit/:id",
 };

@@ -9,18 +9,18 @@ export default function Button({ text, onClick, loading = false }) {
       onClick={onClick}
       disabled={loading}
       sx={{
-        backgroundColor: AppColors.primary,   // primary yellow
+        backgroundColor: AppColors.primaryDeep,   // primary yellow
         color: AppColors.blackColor,             // black text
         borderRadius: "12px",         // rounded corners
         padding: "10px 16px",
         fontWeight: 600,
         boxShadow: "none",            // remove shadow
         "&:hover": {
-          backgroundColor: AppColors.primaryDeep, // slightly darker on hover
+          backgroundColor: AppColors.primary, // slightly darker on hover
           boxShadow: "none",          // ensure no shadow on hover
         },
         "&:disabled": {
-          backgroundColor: AppColors.grayLightColor, // disabled style
+          backgroundColor: AppColors.grayColor, // disabled style
           color: AppColors.blackColor,
         },
       }}

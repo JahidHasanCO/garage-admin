@@ -60,11 +60,11 @@ export default function PartsPage() {
   }, [location, navigate]);
 
   const handleAddPart = () => {
-    navigate("/dashboard/parts/add");
+    navigate("/parts/add");
   };
 
   const handleEditPart = (partId) => {
-    navigate(`/dashboard/parts/edit/${partId}`);
+    navigate(`/parts/edit/${partId}`);
   };
 
   const handleDeleteClick = (part) => {

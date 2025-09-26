@@ -31,7 +31,7 @@ const menuItems = [
     {
         text: "Parts",
         icon: <BuildIcon />,
-        path: "/dashboard/parts",
+        path: "/parts",
     },
 ];
 

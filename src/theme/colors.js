@@ -1,9 +1,9 @@
 export  const AppColors = {
-  primary: "#DEE33E",
-  primaryDeep: "#9FA324",
+  primary: "#DEE8CE",
+  primaryDeep: "#a4b983ff",
 
-  secondary: "#44b5ff",
-  secondaryDeep: "#29abff",
+  secondary: "#DEE8CE",
+  secondaryDeep: "#a4b983ff",
 
   // text colors
   textTitleColor: "#15141F",
@@ -11,7 +11,7 @@ export  const AppColors = {
   textGrayColor: "#77777D",
 
   // button colors
-  outline: "#9FA324",
+  outline: "#a4b983ff",
 
   grayColor: "#E1E1E1",
   grayLightColor: "#EBE9E9",

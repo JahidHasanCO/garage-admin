@@ -13,20 +13,25 @@ export default function AppRoutes() {
 
   return (
     <Routes>
-      <Route 
-        path={RouteNames.LOGIN} 
-        element={token ? <Navigate to={RouteNames.DASHBOARD} /> : <LoginPage />} 
+      <Route
+        path={RouteNames.LOGIN}
+        element={token ? <Navigate to={RouteNames.DASHBOARD} replace /> : <LoginPage />}
       />
       <Route
-        path="/dashboard"
-        element={token ? <DashboardLayout /> : <Navigate to={RouteNames.LOGIN} />}
+        path={RouteNames.DASHBOARD}
+        element={token ? <DashboardLayout /> : <Navigate to={RouteNames.LOGIN} replace />}
       >
         <Route index element={<DashboardHome />} />
-        <Route path="parts" element={<PartsPage />} />
-        <Route path="parts/add" element={<AddEditPartPage />} />
-        <Route path="parts/edit/:id" element={<AddEditPartPage />} />
       </Route>
-      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+      <Route
+        path={RouteNames.PARTS}
+        element={token ? <DashboardLayout /> : <Navigate to={RouteNames.LOGIN} replace />}
+      >
+        <Route index element={<PartsPage />} />
+        <Route path="add" element={<AddEditPartPage />} />
+        <Route path="edit/:id" element={<AddEditPartPage />} />
+      </Route>
+      <Route path="/" element={<Navigate to={RouteNames.DASHBOARD} replace />} />
       <Route path="*" element={<div>404 Not Found</div>} />
     </Routes>
   );
