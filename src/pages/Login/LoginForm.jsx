@@ -27,10 +27,27 @@ export default function LoginForm() {
 
   return (
     <div>
-      <InputField label="Email" value={email} onChange={(e)=>setEmail(e.target.value)} />
-      <InputField label="Password" type="password" value={password} onChange={(e)=>setPassword(e.target.value)} />
-      <AlertMessage message={error} />
-      <Button text="Login" onClick={handleLogin} loading={loading} />
+      <InputField
+        label="Email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+      />
+      <InputField
+        label="Password"
+        type="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+      />
+
+      {/* Space before button */}
+      <div style={{ marginTop: "16px" }}>
+        <Button text="Login" onClick={handleLogin} loading={loading} />
+      </div>
+
+      {error && <div style={{ marginTop: "12px" }}>
+        <AlertMessage message={error} />
+      </div>}
     </div>
   );
+
 }
