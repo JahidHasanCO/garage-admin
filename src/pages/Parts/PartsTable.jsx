@@ -49,50 +49,54 @@ const PartsTable = ({
   };
 
   return (
-    <Card>
-      <CardContent>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            mb: 2,
-          }}
-        >
-          {/* Left side */}
-          <Box>
-            <Typography variant="h6" component="h2">
-              Parts Inventory
+    <Box sx={{ width: '100%' }}>
+      {/* Header Section */}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          px: 3,
+          py: 2,
+          backgroundColor: "white",
+          borderBottom: "1px solid #e5e7eb",
+        }}
+      >
+        {/* Left side */}
+        <Box>
+          <Typography variant="h6" component="h2">
+            Parts Inventory
+          </Typography>
+          {searchQuery && (
+            <Typography variant="body2" color="text.secondary">
+              Search results for: "{searchQuery}"
             </Typography>
-            {searchQuery && (
-              <Typography variant="body2" color="text.secondary">
-                Search results for: "{searchQuery}"
-              </Typography>
-            )}
-          </Box>
-
-          {/* Right side */}
-          <Button
-            text="Add Part"
-            variant="outlined"
-            onClick={onAddPart}
-            fullWidth={false}
-          />
+          )}
         </Box>
 
-        <TableContainer component={Paper} sx={{ boxShadow: "none" }}>
-          <Table>
-            <TableHead>
-              <TableRow sx={{ backgroundColor: "#f8fafc" }}>
-                <TableCell sx={{ fontWeight: "bold" }}>Image</TableCell>
-                <TableCell sx={{ fontWeight: "bold" }}>Part Name</TableCell>
-                <TableCell sx={{ fontWeight: "bold" }}>SKU</TableCell>
-                <TableCell sx={{ fontWeight: "bold" }}>Price</TableCell>
-                <TableCell sx={{ fontWeight: "bold" }}>Created</TableCell>
-                <TableCell sx={{ fontWeight: "bold" }}>Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
+        {/* Right side */}
+        <Button
+          text="Add Part"
+          variant="outlined"
+          onClick={onAddPart}
+          fullWidth={false}
+        />
+      </Box>
+
+      {/* Table Section */}
+      <TableContainer component={Paper} sx={{ boxShadow: "none", borderRadius: 0 }}>
+        <Table>
+          <TableHead>
+            <TableRow sx={{ backgroundColor: "#f8fafc" }}>
+              <TableCell sx={{ fontWeight: "bold" }}>Image</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Part Name</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>SKU</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Price</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Created</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
               {loading ? (
                 <TableRow>
                   <TableCell colSpan={6} align="center" sx={{ py: 4 }}>
@@ -207,11 +211,10 @@ const PartsTable = ({
                   </TableRow>
                 ))
               )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </CardContent>
-    </Card>
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Box>
   );
 };
 

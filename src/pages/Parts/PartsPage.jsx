@@ -102,32 +102,36 @@ export default function PartsPage() {
 
   if (error) {
     return (
-      <Box sx={{ p: 3, width: "100%", minHeight: "100vh", flex: 1 }}>
-        <Alert
-          severity="error"
-          sx={{ mb: 2 }}
-          action={
-            <Button color="inherit" size="small" onClick={refresh}>
-              Retry
-            </Button>
-          }
-        >
-          {error}
-        </Alert>
+      <Box sx={{ width: "100%", minHeight: "100vh", flex: 1 }}>
+        <Box sx={{ p: 3 }}>
+          <Alert
+            severity="error"
+            sx={{ mb: 2 }}
+            action={
+              <Button color="inherit" size="small" onClick={refresh}>
+                Retry
+              </Button>
+            }
+          >
+            {error}
+          </Alert>
+        </Box>
       </Box>
     );
   }
 
   return (
-    <Box sx={{ p: 3, width: "100%", minHeight: "100vh", flex: 1 }}>
+    <Box sx={{ width: "100%", minHeight: "100vh", flex: 1 }}>
       {/* Header */}
-      <PageHeader
-        title="Parts Management"
-        breadcrumbs={[
-          { label: "Dashboard", path: "/dashboard" },
-          { label: "Parts", path: "/parts" },
-        ]}
-      />
+      <Box sx={{ p: 3, pb: 0 }}>
+        <PageHeader
+          title="Parts Management"
+          breadcrumbs={[
+            { label: "Dashboard", path: "/dashboard" },
+            { label: "Parts", path: "/parts" },
+          ]}
+        />
+      </Box>
 
       {/* Parts Table */}
       <PartsTable
@@ -141,7 +145,7 @@ export default function PartsPage() {
       />
 
       {/* Pagination */}
-      <Box sx={{ mt: 2 }}>
+      <Box sx={{ px: 3, mt: 2, mb: 3 }}>
         <PaginationControls
           page={pagination.page}
           pages={pagination.pages}
