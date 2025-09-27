@@ -10,18 +10,13 @@ import { Add as AddIcon } from "@mui/icons-material";
 import { usePartsData } from "../../hooks/usePartsData";
 import PaginationControls from "../../components/PaginationControls";
 import PageHeader from "../../components/PageHeader";
-import StatsGrid from "../../components/StatsGrid";
-import PartsTable from "../../components/PartsTable";
+import PartsTable from "./PartsTable";
 import DeleteConfirmDialog from "../../components/DeleteConfirmDialog";
-// Temporarily disabled search integration to fix infinite loop
-// import { useSearch } from "../../contexts/useSearchContext";
+
 
 export default function PartsPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  // Temporarily disabled search integration to fix infinite loop
-  // const { registerSearchHandler, unregisterSearchHandler } = useSearch();
-  
   // Use the custom hook for parts data
   const {
     parts,
@@ -77,7 +72,7 @@ export default function PartsPage() {
   const handleDeleteConfirm = async () => {
     if (deleteDialog.part) {
       const result = await deletePart(deleteDialog.part._id);
-      
+
       if (result.success) {
         setSnackbar({
           open: true,
@@ -92,7 +87,7 @@ export default function PartsPage() {
         });
       }
     }
-    
+
     setDeleteDialog({ open: false, part: null });
   };
 
@@ -104,48 +99,12 @@ export default function PartsPage() {
     setSnackbar({ ...snackbar, open: false });
   };
 
-  // Prepare stats data
-  const statsData = [
-    {
-      title: "Total Parts",
-      value: pagination.total,
-    },
-    {
-      title: "Current Page", 
-      value: pagination.page,
-    },
-    {
-      title: "Total Pages",
-      value: pagination.pages,
-    },
-    {
-      title: "Per Page",
-      value: pagination.limit,
-    },
-  ];
-
-  // Prepare action button for header
-  const actionButton = (
-    <Button
-      variant="contained"
-      startIcon={<AddIcon />}
-      onClick={handleAddPart}
-      sx={{
-        backgroundColor: "#3b82f6",
-        "&:hover": {
-          backgroundColor: "#2563eb",
-        },
-      }}
-    >
-      Add New Part
-    </Button>
-  );
 
   if (error) {
     return (
       <Box sx={{ p: 3 }}>
-        <Alert 
-          severity="error" 
+        <Alert
+          severity="error"
           sx={{ mb: 2 }}
           action={
             <Button color="inherit" size="small" onClick={refresh}>
@@ -162,13 +121,13 @@ export default function PartsPage() {
   return (
     <Box sx={{ p: 3 }}>
       {/* Header */}
-      <PageHeader 
+      <PageHeader
         title="Parts Management"
-        actionButton={actionButton}
+        breadcrumbs={[
+          { label: "Dashboard", path: "/dashboard" },
+          { label: "Parts", path: "/parts" },
+        ]}
       />
-
-      {/* Stats Cards */}
-      <StatsGrid stats={statsData} loading={loading} />
 
       {/* Parts Table */}
       <PartsTable
