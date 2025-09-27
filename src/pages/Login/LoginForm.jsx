@@ -39,15 +39,21 @@ export default function LoginForm() {
         onChange={(e) => setPassword(e.target.value)}
       />
 
-      {/* Space before button */}
-      <div style={{ marginTop: "16px" }}>
-        <Button text="Login" onClick={handleLogin} loading={loading} />
-      </div>
+      {/* Button with top margin */}
+      <Button
+        text="Login"
+        onClick={handleLogin}
+        loading={loading}
+        className="mt-4" // Tailwind: mt-4 = 16px top margin
+      />
 
-      {error && <div style={{ marginTop: "12px" }}>
-        <AlertMessage message={error} />
-      </div>}
+      {error && (
+        <div className="mt-3"> {/* Tailwind: mt-3 = 12px */}
+          <AlertMessage message={error} />
+        </div>
+      )}
     </div>
+
   );
 
 }

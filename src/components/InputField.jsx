@@ -12,7 +12,7 @@ export default function InputField({ label, type = "text", value, onChange, plac
         required={required}
         disabled={disabled}
         className={`
-          w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary
+          w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-primary-600
           ${error ? 'border-error text-error' : 'border-gray-300 text-gray-900'}
           ${disabled ? 'bg-gray-100 cursor-not-allowed' : 'bg-white'}
           transition-colors duration-200
