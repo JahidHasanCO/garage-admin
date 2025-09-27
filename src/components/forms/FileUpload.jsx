@@ -75,8 +75,8 @@ const FileUpload = ({
 
   return (
     <div className="mb-4 w-full">
-      <label className={`block text-sm font-medium mb-2 ${error ? 'text-red-600' : 'text-gray-700'}`}>
-        {label} {required && <span className="text-red-500">*</span>}
+      <label className={`block text-sm font-medium mb-2 ${error ? 'text-error' : 'text-text-title'}`}>
+        {label} {required && <span className="text-error">*</span>}
       </label>
 
       {/* File Input */}
@@ -115,7 +115,7 @@ const FileUpload = ({
           className={`
             border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-all duration-200
             w-full min-h-48 flex flex-col justify-center items-center
-            ${error ? 'border-red-500' : dragActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-blue-500 hover:bg-gray-50'}
+            ${error ? 'border-error' : dragActive ? 'border-primaryDeep bg-blue-50' : 'border-gray-border hover:border-primaryDeep hover:bg-gray-50'}
           `}
         >
           <div className="text-gray-400 mb-4">
@@ -129,7 +129,7 @@ const FileUpload = ({
           <p className="text-sm text-gray-500 mb-4">or</p>
           <button
             type="button"
-            className="inline-flex items-center px-4 py-2 border-2 border-blue-500 text-blue-500 bg-transparent rounded-lg hover:bg-blue-500 hover:text-white transition-all duration-200"
+            className="inline-flex items-center px-4 py-2 border-2 border-primaryDeep text-primaryDeep bg-transparent rounded-lg hover:bg-primaryDeep hover:text-white transition-all duration-200"
           >
             <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
               <path d="M5.5 13a3.5 3.5 0 01-.369-6.98 4 4 0 117.753-1.977A4.5 4.5 0 1113.5 13H11V9.413l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13H5.5z" />
@@ -143,7 +143,7 @@ const FileUpload = ({
       )}
 
       {(error || helperText) && (
-        <p className={`mt-2 text-sm ${error ? 'text-red-600' : 'text-gray-500'}`}>
+        <p className={`mt-2 text-sm ${error ? 'text-error' : 'text-text-gray'}`}>
           {error || helperText}
         </p>
       )}

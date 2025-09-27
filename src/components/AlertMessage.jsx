@@ -41,7 +41,7 @@ export default function AlertMessage({ type = "error", message, onClose, classNa
   return (
     <div className={`border rounded-lg p-4 mt-4 ${typeStyles[type]} ${className}`}>
       <div className="flex items-start">
-        <div className={`flex-shrink-0 ${iconStyles[type]}`}>
+        <div className={`shrink-0 ${iconStyles[type]}`}>
           {icons[type]}
         </div>
         <div className="ml-3 flex-1">

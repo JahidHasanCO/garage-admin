@@ -23,14 +23,14 @@ export default function Button({
   const getVariantClasses = () => {
     const colorMap = {
       primary: {
-        contained: "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 disabled:bg-gray-300 disabled:text-gray-500",
-        outlined: "border-2 border-blue-600 text-blue-600 bg-transparent hover:bg-blue-600 hover:text-white focus:ring-blue-500 disabled:border-gray-300 disabled:text-gray-300",
-        text: "text-blue-600 bg-transparent hover:bg-blue-50 focus:ring-blue-500 disabled:text-gray-300"
+        contained: "bg-primaryDeep text-white hover:bg-primaryDeep-light focus:ring-primaryDeep disabled:bg-gray-300 disabled:text-gray-500",
+        outlined: "border-2 border-primaryDeep text-primaryDeep bg-transparent hover:bg-primaryDeep hover:text-white focus:ring-primaryDeep disabled:border-gray-300 disabled:text-gray-300",
+        text: "text-primaryDeep bg-transparent hover:bg-blue-50 focus:ring-primaryDeep disabled:text-gray-300"
       },
       secondary: {
-        contained: "bg-green-600 text-white hover:bg-green-700 focus:ring-green-500 disabled:bg-gray-300 disabled:text-gray-500",
-        outlined: "border-2 border-green-600 text-green-600 bg-transparent hover:bg-green-600 hover:text-white focus:ring-green-500 disabled:border-gray-300 disabled:text-gray-300",
-        text: "text-green-600 bg-transparent hover:bg-green-50 focus:ring-green-500 disabled:text-gray-300"
+        contained: "bg-primary text-white hover:bg-primary-light focus:ring-primary disabled:bg-gray-300 disabled:text-gray-500",
+        outlined: "border-2 border-primary text-primary bg-transparent hover:bg-primary hover:text-white focus:ring-primary disabled:border-gray-300 disabled:text-gray-300",
+        text: "text-primary bg-transparent hover:bg-green-50 focus:ring-primary disabled:text-gray-300"
       },
       error: {
         contained: "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 disabled:bg-gray-300 disabled:text-gray-500",
@@ -58,9 +58,9 @@ export default function Button({
       {...props}
     >
       <div className="flex items-center justify-center gap-2">
-        {startIcon && <span className="flex-shrink-0">{startIcon}</span>}
+        {startIcon && <span className="shrink-0">{startIcon}</span>}
         <span>{loading ? "Loading..." : text}</span>
-        {endIcon && <span className="flex-shrink-0">{endIcon}</span>}
+        {endIcon && <span className="shrink-0">{endIcon}</span>}
       </div>
     </button>
   );

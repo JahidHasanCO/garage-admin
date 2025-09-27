@@ -77,7 +77,7 @@ export default function Sidebar() {
                                     }
                                 `}
                             >
-                                <div className={`flex-shrink-0 ${collapsed ? '' : 'mr-3'}`}>
+                                <div className={`shrink-0 ${collapsed ? '' : 'mr-3'}`}>
                                     {item.icon}
                                 </div>
                                 {!collapsed && (

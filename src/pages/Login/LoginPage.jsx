@@ -8,7 +8,7 @@ export default function LoginPage() {
       </div>
 
       <div className="w-full max-w-sm bg-white p-6 rounded-xl shadow-md">
-        <h2 className="text-xl font-bold text-center mb-4 text-blue-600">
+        <h2 className="text-xl font-bold text-center mb-4 text-primary">
           Login to your account
         </h2>
         <LoginForm />
