@@ -1,44 +1,18 @@
-import { Box, Card, CardContent, Typography } from "@mui/material";
 import LoginForm from "./LoginForm";
 
 export default function LoginPage() {
   return (
-    <Box
-      sx={{
-        minHeight: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "#FAFAFA",
-        flexDirection: "column",
-        px: 2,
-      }}
-    >
-      <Box sx={{ textAlign: "center", mb: 3 }}>
-        <img src="/images/logo.png" alt="Logo" width={150} />
-      </Box>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4">
+      <div className="text-center mb-6">
+        <img src="/images/logo.png" alt="Logo" className="w-36" />
+      </div>
 
-      <Card
-        sx={{
-          width: "100%",      // full width up to maxWidth
-          maxWidth: 400,      // card won't exceed 400px
-          p: 3,
-          borderRadius: 2,
-          boxShadow: 3,
-        }}
-      >
-        <CardContent>
-          <Typography
-            variant="h5"
-            fontWeight="bold"
-            align="center"
-            gutterBottom
-          >
-            Login to your account
-          </Typography>
-          <LoginForm />
-        </CardContent>
-      </Card>
-    </Box>
+      <div className="w-full max-w-sm bg-white p-6 rounded-xl shadow-md">
+        <h2 className="text-xl font-bold text-center mb-4 text-primary-500">
+          Login to your account
+        </h2>
+        <LoginForm />
+      </div>
+    </div>
   );
 }
