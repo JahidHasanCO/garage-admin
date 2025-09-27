@@ -1,28 +1,6 @@
 import React from "react";
-import {
-  Card,
-  CardContent,
-  Box,
-  Typography,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  CircularProgress,
-  Chip,
-  Avatar,
-} from "@mui/material";
-import {
-  Add as AddIcon,
-  Edit as EditIcon,
-  Delete as DeleteIcon,
-  Image as ImageIcon,
-} from "@mui/icons-material";
-
 import Button from "../../components/Button";
+import { PlusIcon, PencilIcon, TrashIcon, PhotoIcon } from "@heroicons/react/24/solid";
 
 const PartsTable = ({
   parts,
@@ -33,196 +11,145 @@ const PartsTable = ({
   onDelete,
   onAddPart,
 }) => {
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(price);
-  };
+  const formatPrice = (price) =>
+    new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(price);
 
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
-  };
+  const formatDate = (dateString) =>
+    new Date(dateString).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
 
   return (
-    <Box sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
-      {/* Header Section */}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          px: 3,
-          py: 2,
-          backgroundColor: "white",
-          borderBottom: "1px solid #e5e7eb",
-          flexShrink: 0,
-        }}
-      >
-        {/* Left side */}
-        <Box>
-          <Typography variant="h6" component="h6" sx={{ color: "black" }}>
-            Parts
-          </Typography>
+    <div className="flex flex-col w-full h-full">
+      {/* Header */}
+      <div className="flex justify-between items-center px-6 py-4 bg-white border-b border-gray-200 flex-shrink-0">
+        <div>
+          <h2 className="text-lg font-semibold text-black">Parts</h2>
           {searchQuery && (
-            <Typography variant="body2" color="text.secondary" sx={{ color: "black" }}>
-              Search results for: "{searchQuery}"
-            </Typography>
+            <p className="text-sm text-gray-700 mt-1">Search results for: "{searchQuery}"</p>
           )}
-        </Box>
+        </div>
         <Button
           text="Add Part"
           variant="outlined"
+          startIcon={<PlusIcon className="w-5 h-5" />}
           onClick={onAddPart}
           fullWidth={false}
         />
-      </Box>
+      </div>
 
-      {/* Table Section */}
-      <TableContainer 
-        component={Paper} 
-        sx={{ 
-          boxShadow: "none", 
-          borderRadius: 0, 
-          flex: 1,
-          overflow: "auto",
-          height: "100%"
-        }}
-      >
-        <Table stickyHeader>
-          <TableHead>
-            <TableRow sx={{ backgroundColor: "#f8fafc" }}>
-              <TableCell sx={{ fontWeight: "bold" }}>Image</TableCell>
-              <TableCell sx={{ fontWeight: "bold" }}>Part Name</TableCell>
-              <TableCell sx={{ fontWeight: "bold" }}>SKU</TableCell>
-              <TableCell sx={{ fontWeight: "bold" }}>Price</TableCell>
-              <TableCell sx={{ fontWeight: "bold" }}>Created</TableCell>
-              <TableCell sx={{ fontWeight: "bold" }}>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-              {loading ? (
-                <TableRow>
-                  <TableCell colSpan={6} align="center" sx={{ py: 4 }}>
-                    <CircularProgress size={40} />
-                    <Typography variant="body2" sx={{ mt: 2 }}>
-                      Loading parts...
-                    </Typography>
-                  </TableCell>
-                </TableRow>
-              ) : parts.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={6} align="center" sx={{ py: 4 }}>
-                    <Typography variant="h6" color="text.secondary">
-                      {searchQuery ? "No parts found matching your search" : "No parts available"}
-                    </Typography>
-                    {!searchQuery && (
+      {/* Table */}
+      <div className="flex-1 overflow-auto">
+        <table className="min-w-full table-auto border-collapse">
+          <thead className="bg-gray-100 sticky top-0">
+            <tr>
+              <th className="text-left font-bold px-4 py-2">Image</th>
+              <th className="text-left font-bold px-4 py-2">Part Name</th>
+              <th className="text-left font-bold px-4 py-2">SKU</th>
+              <th className="text-left font-bold px-4 py-2">Price</th>
+              <th className="text-left font-bold px-4 py-2">Created</th>
+              <th className="text-left font-bold px-4 py-2">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {loading ? (
+              <tr>
+                <td colSpan={6} className="text-center py-8">
+                  <div className="flex flex-col items-center">
+                    <div className="loader mb-2" /> {/* Replace with your spinner */}
+                    <p className="text-gray-600">Loading parts...</p>
+                  </div>
+                </td>
+              </tr>
+            ) : parts.length === 0 ? (
+              <tr>
+                <td colSpan={6} className="text-center py-8">
+                  <p className="text-gray-500 text-lg">
+                    {searchQuery ? "No parts found matching your search" : "No parts available"}
+                  </p>
+                  {!searchQuery && (
+                    <div className="mt-4">
                       <Button
+                        text="Add Your First Part"
                         variant="outlined"
-                        startIcon={<AddIcon />}
+                        startIcon={<PlusIcon className="w-5 h-5" />}
                         onClick={onAddPart}
-                        sx={{ mt: 2 }}
-                      >
-                        Add Your First Part
-                      </Button>
+                        fullWidth={false}
+                      />
+                    </div>
+                  )}
+                </td>
+              </tr>
+            ) : (
+              parts.map((part) => (
+                <tr key={part._id} className="hover:bg-gray-50">
+                  <td className="px-4 py-3">
+                    {part.image ? (
+                      <img
+                        src={part.image}
+                        alt={part.name}
+                        className="w-12 h-12 object-cover rounded-lg"
+                      />
+                    ) : (
+                      <div className="w-12 h-12 bg-gray-200 flex items-center justify-center rounded-lg">
+                        <PhotoIcon className="w-5 h-5 text-gray-400" />
+                      </div>
                     )}
-                  </TableCell>
-                </TableRow>
-              ) : (
-                parts.map((part) => (
-                  <TableRow key={part._id} hover>
-                    <TableCell>
-                      {part.image ? (
-                        <Avatar
-                          src={part.image}
-                          alt={part.name}
-                          sx={{ width: 50, height: 50 }}
-                          variant="rounded"
-                        />
-                      ) : (
-                        <Avatar sx={{ width: 50, height: 50 }} variant="rounded">
-                          <ImageIcon />
-                        </Avatar>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <Typography sx={{ fontWeight: "medium", mb: 0.5 }}>
-                        {part.name}
-                      </Typography>
-                      {part.description && (
-                        <Typography variant="body2" color="text.secondary">
-                          {part.description.length > 50
-                            ? `${part.description.substring(0, 50)}...`
-                            : part.description}
-                        </Typography>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {part.sku ? (
-                        <Chip
-                          label={part.sku}
-                          size="small"
-                          sx={{
-                            backgroundColor: "#e0f2fe",
-                            color: "#0277bd",
-                            fontWeight: "medium",
-                          }}
-                        />
-                      ) : (
-                        <Typography variant="body2" color="text.secondary">
-                          No SKU
-                        </Typography>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <Typography sx={{ fontWeight: "medium", color: "#10b981" }}>
-                        {formatPrice(part.price)}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant="body2" color="text.secondary">
-                        {formatDate(part.createdAt)}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Box sx={{ display: "flex", gap: 1 }}>
-                        <Button
-                          size="small"
-                          startIcon={<EditIcon />}
-                          onClick={() => onEdit(part._id)}
-                          sx={{ minWidth: "auto" }}
-                        >
-                          Edit
-                        </Button>
-                        <Button
-                          size="small"
-                          color="error"
-                          startIcon={
-                            deleteLoading === part._id ? (
-                              <CircularProgress size={16} />
-                            ) : (
-                              <DeleteIcon />
-                            )
-                          }
-                          onClick={() => onDelete(part)}
-                          disabled={deleteLoading === part._id}
-                          sx={{ minWidth: "auto" }}
-                        >
-                          Delete
-                        </Button>
-                      </Box>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </Box>
+                  </td>
+                  <td className="px-4 py-3">
+                    <p className="font-medium">{part.name}</p>
+                    {part.description && (
+                      <p className="text-sm text-gray-500">
+                        {part.description.length > 50
+                          ? `${part.description.substring(0, 50)}...`
+                          : part.description}
+                      </p>
+                    )}
+                  </td>
+                  <td className="px-4 py-3">
+                    {part.sku ? (
+                      <span className="px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded">
+                        {part.sku}
+                      </span>
+                    ) : (
+                      <p className="text-gray-400 text-sm">No SKU</p>
+                    )}
+                  </td>
+                  <td className="px-4 py-3">
+                    <p className="text-green-500 font-medium">{formatPrice(part.price)}</p>
+                  </td>
+                  <td className="px-4 py-3 text-gray-500 text-sm">{formatDate(part.createdAt)}</td>
+                  <td className="px-4 py-3">
+                    <div className="flex gap-2">
+                      <Button
+                        text="Edit"
+                        size="small"
+                        startIcon={<PencilIcon className="w-4 h-4" />}
+                        onClick={() => onEdit(part._id)}
+                        fullWidth={false}
+                      />
+                      <Button
+                        text="Delete"
+                        size="small"
+                        color="error"
+                        startIcon={
+                          deleteLoading === part._id ? (
+                            <div className="loader w-4 h-4" /> // Replace with spinner
+                          ) : (
+                            <TrashIcon className="w-4 h-4" />
+                          )
+                        }
+                        onClick={() => onDelete(part)}
+                        disabled={deleteLoading === part._id}
+                        fullWidth={false}
+                      />
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
   );
 };
 

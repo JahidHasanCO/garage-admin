@@ -20,8 +20,8 @@ const FormField = ({
   ...props
 }) => {
   const inputClasses = `
-    w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primaryDeep focus:border-primaryDeep
-    ${error ? 'border-error text-red-900' : 'border-gray-border text-text-title'}
+    w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-primary-600
+    ${error ? 'border-red-500 text-red-900' : 'border-gray-300 text-gray-900'}
     ${disabled ? 'bg-gray-100 cursor-not-allowed' : 'bg-white'}
     transition-colors duration-200
     ${!fullWidth ? 'w-auto' : ''}
@@ -29,8 +29,8 @@ const FormField = ({
 
   return (
     <div className={`mb-4 ${!fullWidth ? 'inline-block' : 'w-full'}`} style={sx}>
-      <label className="block text-sm font-medium text-text-title mb-2">
-        {label} {required && <span className="text-error">*</span>}
+      <label className="block text-sm font-medium text-gray-900 mb-2">
+        {label} {required && <span className="text-red-500">*</span>}
       </label>
       
       <div className="relative">
@@ -76,7 +76,7 @@ const FormField = ({
       </div>
       
       {(error || helperText) && (
-        <p className={`mt-1 text-sm ${error ? 'text-error' : 'text-text-gray'}`}>
+        <p className={`mt-1 text-sm ${error ? 'text-red-500' : 'text-gray-500'}`}>
           {error || helperText}
         </p>
       )}
