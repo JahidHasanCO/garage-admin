@@ -89,7 +89,7 @@ const FileUpload = ({
   };
 
   return (
-    <FormControl fullWidth error={!!error} sx={{ mb: 2 }}>
+    <FormControl fullWidth error={!!error} sx={{ mb: 2, width: '100%' }}>
       <Typography
         variant="subtitle1"
         sx={{ mb: 1, fontWeight: 500, color: error ? "error.main" : "text.primary" }}
@@ -108,13 +108,13 @@ const FileUpload = ({
 
       {/* Upload Area or Preview */}
       {preview ? (
-        <Card sx={{ position: "relative", maxWidth: 300 }}>
+        <Card sx={{ position: "relative", width: '100%', maxWidth: '100%' }}>
           <CardMedia
             component="img"
             height="200"
             image={preview}
             alt="Preview"
-            sx={{ objectFit: "cover" }}
+            sx={{ objectFit: "cover", width: '100%' }}
           />
           <IconButton
             onClick={handleRemove}
@@ -148,6 +148,12 @@ const FileUpload = ({
             cursor: "pointer",
             backgroundColor: dragActive ? "#eff6ff" : "#fafafa",
             transition: "all 0.2s ease",
+            width: '100%',
+            minHeight: 200,
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
             "&:hover": {
               backgroundColor: "#f3f4f6",
               borderColor: "#3b82f6",

@@ -102,7 +102,7 @@ export default function PartsPage() {
 
   if (error) {
     return (
-      <Box sx={{ width: "100%", minHeight: "100vh", flex: 1 }}>
+      <Box sx={{ width: "100%", height: "100%", display: "flex", flexDirection: "column" }}>
         <Box sx={{ p: 3 }}>
           <Alert
             severity="error"
@@ -121,9 +121,9 @@ export default function PartsPage() {
   }
 
   return (
-    <Box sx={{ width: "100%", minHeight: "100vh", flex: 1 }}>
+    <Box sx={{ width: "100%", height: "100%", display: "flex", flexDirection: "column" }}>
       {/* Header */}
-      <Box sx={{ p: 3, pb: 0 }}>
+      <Box sx={{ p: 3, pb: 0, flexShrink: 0 }}>
         <PageHeader
           title="Parts Management"
           breadcrumbs={[
@@ -134,18 +134,20 @@ export default function PartsPage() {
       </Box>
 
       {/* Parts Table */}
-      <PartsTable
-        parts={parts}
-        loading={loading}
-        searchQuery={searchQuery}
-        deleteLoading={deleteLoading}
-        onEdit={handleEditPart}
-        onDelete={handleDeleteClick}
-        onAddPart={handleAddPart}
-      />
+      <Box sx={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+        <PartsTable
+          parts={parts}
+          loading={loading}
+          searchQuery={searchQuery}
+          deleteLoading={deleteLoading}
+          onEdit={handleEditPart}
+          onDelete={handleDeleteClick}
+          onAddPart={handleAddPart}
+        />
+      </Box>
 
       {/* Pagination */}
-      <Box sx={{ px: 3, mt: 2, mb: 3 }}>
+      <Box sx={{ px: 3, py: 2, flexShrink: 0, borderTop: "1px solid #e5e7eb", backgroundColor: "white" }}>
         <PaginationControls
           page={pagination.page}
           pages={pagination.pages}

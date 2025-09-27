@@ -49,7 +49,7 @@ const PartsTable = ({
   };
 
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
       {/* Header Section */}
       <Box
         sx={{
@@ -60,6 +60,7 @@ const PartsTable = ({
           py: 2,
           backgroundColor: "white",
           borderBottom: "1px solid #e5e7eb",
+          flexShrink: 0,
         }}
       >
         {/* Left side */}
@@ -84,8 +85,17 @@ const PartsTable = ({
       </Box>
 
       {/* Table Section */}
-      <TableContainer component={Paper} sx={{ boxShadow: "none", borderRadius: 0 }}>
-        <Table>
+      <TableContainer 
+        component={Paper} 
+        sx={{ 
+          boxShadow: "none", 
+          borderRadius: 0, 
+          flex: 1,
+          overflow: "auto",
+          height: "100%"
+        }}
+      >
+        <Table stickyHeader>
           <TableHead>
             <TableRow sx={{ backgroundColor: "#f8fafc" }}>
               <TableCell sx={{ fontWeight: "bold" }}>Image</TableCell>

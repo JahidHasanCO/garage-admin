@@ -30,9 +30,6 @@ html, body, #root {
 
 
 body {
-  display: flex;
-  justify-content: center; /* horizontal centering */
-  align-items: center;     /* vertical centering */
   min-width: 320px;
   background-color: #FAFAFA;
 }

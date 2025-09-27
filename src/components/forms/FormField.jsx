@@ -22,11 +22,12 @@ const FormField = ({
   required = false,
   disabled = false,
   fullWidth = true,
+  sx,
   ...props
 }) => {
   return (
-    <Box sx={{ mb: 2 }}>
-      <FormControl fullWidth={fullWidth} error={!!error}>
+    <Box sx={{ mb: 2, width: fullWidth ? "100%" : "auto", ...sx }}>
+      <FormControl fullWidth={fullWidth} error={!!error} sx={{ width: "100%" }}>
         <TextField
           label={label}
           name={name}
@@ -44,7 +45,9 @@ const FormField = ({
           variant="outlined"
           fullWidth={fullWidth}
           sx={{
+            width: "100%",
             "& .MuiOutlinedInput-root": {
+              width: "100%",
               "&:hover fieldset": {
                 borderColor: "#3b82f6",
               },

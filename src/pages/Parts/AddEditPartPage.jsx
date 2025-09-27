@@ -121,7 +121,7 @@ export default function AddEditPartPage() {
   }
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ p: 3, width: "100%", maxWidth: "none" }}>
       {/* Breadcrumbs */}
       <Breadcrumbs sx={{ mb: 2 }}>
         <Link
@@ -174,9 +174,9 @@ export default function AddEditPartPage() {
       )}
 
       {/* Main Form Card */}
-      <Card>
+      <Card sx={{ width: "100%" }}>
         <CardContent sx={{ p: 4 }}>
-          <Grid container spacing={4}>
+          <Grid container spacing={4} sx={{ width: "100%" }}>
             {/* Left Column - Form Fields */}
             <Grid item xs={12} md={8}>
               <Typography variant="h6" sx={{ mb: 3, fontWeight: "bold" }}>
@@ -236,15 +236,17 @@ export default function AddEditPartPage() {
                 Part Image
               </Typography>
 
-              <FileUpload
-                label="Upload Image"
-                value={imagePreview}
-                onChange={handleImageChange}
-                error={errors.image}
-                helperText="Upload an image of the part (optional)"
-                accept="image/*"
-                maxSize={5 * 1024 * 1024} // 5MB
-              />
+              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                <FileUpload
+                  label="Upload Image"
+                  value={imagePreview}
+                  onChange={handleImageChange}
+                  error={errors.image}
+                  helperText="Upload an image of the part (optional)"
+                  accept="image/*"
+                  maxSize={5 * 1024 * 1024} // 5MB
+                />
+              </Box>
             </Grid>
           </Grid>
 
