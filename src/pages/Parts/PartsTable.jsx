@@ -65,17 +65,15 @@ const PartsTable = ({
       >
         {/* Left side */}
         <Box>
-          <Typography variant="h6" component="h2">
-            Parts Inventory
+          <Typography variant="h6" component="h6" sx={{ color: "black" }}>
+            Parts
           </Typography>
           {searchQuery && (
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" color="text.secondary" sx={{ color: "black" }}>
               Search results for: "{searchQuery}"
             </Typography>
           )}
         </Box>
-
-        {/* Right side */}
         <Button
           text="Add Part"
           variant="outlined"
