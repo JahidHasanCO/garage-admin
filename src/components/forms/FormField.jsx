@@ -1,11 +1,4 @@
 import React from "react";
-import {
-  TextField,
-  FormControl,
-  FormLabel,
-  FormHelperText,
-  Box,
-} from "@mui/material";
 
 const FormField = ({
   label,
@@ -22,47 +15,72 @@ const FormField = ({
   required = false,
   disabled = false,
   fullWidth = true,
-  sx,
+  sx = {},
+  InputProps,
   ...props
 }) => {
+  const inputClasses = `
+    w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+    ${error ? 'border-red-500 text-red-900' : 'border-gray-300 text-gray-900'}
+    ${disabled ? 'bg-gray-100 cursor-not-allowed' : 'bg-white'}
+    transition-colors duration-200
+    ${!fullWidth ? 'w-auto' : ''}
+  `.trim();
+
   return (
-    <Box sx={{ mb: 2, width: fullWidth ? "100%" : "auto", ...sx }}>
-      <FormControl fullWidth={fullWidth} error={!!error} sx={{ width: "100%" }}>
-        <TextField
-          label={label}
-          name={name}
-          value={value || ""}
-          onChange={onChange}
-          onBlur={onBlur}
-          type={type}
-          multiline={multiline}
-          rows={multiline ? rows : undefined}
-          placeholder={placeholder}
-          required={required}
-          disabled={disabled}
-          error={!!error}
-          helperText={error || helperText}
-          variant="outlined"
-          fullWidth={fullWidth}
-          sx={{
-            width: "100%",
-            "& .MuiOutlinedInput-root": {
-              width: "100%",
-              "&:hover fieldset": {
-                borderColor: "#3b82f6",
-              },
-              "&.Mui-focused fieldset": {
-                borderColor: "#3b82f6",
-              },
-            },
-            "& .MuiInputLabel-root.Mui-focused": {
-              color: "#3b82f6",
-            },
-          }}
-          {...props}
-        />
-      </FormControl>
-    </Box>
+    <div className={`mb-4 ${!fullWidth ? 'inline-block' : 'w-full'}`} style={sx}>
+      <label className="block text-sm font-medium text-gray-700 mb-2">
+        {label} {required && <span className="text-red-500">*</span>}
+      </label>
+      
+      <div className="relative">
+        {InputProps?.startAdornment && (
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            {InputProps.startAdornment}
+          </div>
+        )}
+        
+        {multiline ? (
+          <textarea
+            name={name}
+            value={value || ""}
+            onChange={onChange}
+            onBlur={onBlur}
+            placeholder={placeholder}
+            required={required}
+            disabled={disabled}
+            rows={rows}
+            className={`${inputClasses} resize-vertical ${InputProps?.startAdornment ? 'pl-10' : ''}`}
+            {...props}
+          />
+        ) : (
+          <input
+            type={type}
+            name={name}
+            value={value || ""}
+            onChange={onChange}
+            onBlur={onBlur}
+            placeholder={placeholder}
+            required={required}
+            disabled={disabled}
+            className={`${inputClasses} ${InputProps?.startAdornment ? 'pl-10' : ''}`}
+            {...props}
+          />
+        )}
+        
+        {InputProps?.endAdornment && (
+          <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+            {InputProps.endAdornment}
+          </div>
+        )}
+      </div>
+      
+      {(error || helperText) && (
+        <p className={`mt-1 text-sm ${error ? 'text-red-600' : 'text-gray-500'}`}>
+          {error || helperText}
+        </p>
+      )}
+    </div>
   );
 };
 

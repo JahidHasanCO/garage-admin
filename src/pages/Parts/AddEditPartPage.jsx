@@ -1,25 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import {
-  Box,
-  Card,
-  CardContent,
-  Typography,
-  Button,
-  Grid,
-  Alert,
-  Breadcrumbs,
-  Link,
-  Divider,
-  CircularProgress,
-} from "@mui/material";
-import {
-  Save as SaveIcon,
-  Cancel as CancelIcon,
-  ArrowBack as ArrowBackIcon,
-} from "@mui/icons-material";
 import FormField from "../../components/forms/FormField";
 import FileUpload from "../../components/forms/FileUpload";
+import Button from "../../components/Button";
+import AlertMessage from "../../components/AlertMessage";
 import { usePartForm } from "../../hooks/usePartForm";
 import { partsService } from "../../api/partsService";
 
@@ -94,94 +78,95 @@ export default function AddEditPartPage() {
 
   if (initialLoading) {
     return (
-      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: 400 }}>
-        <CircularProgress />
-        <Typography variant="h6" sx={{ ml: 2 }}>
-          Loading part data...
-        </Typography>
-      </Box>
+      <div className="flex justify-center items-center h-96">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primaryDeep"></div>
+        <span className="ml-4 text-lg font-medium">Loading part data...</span>
+      </div>
     );
   }
 
   if (loadError) {
     return (
-      <Box sx={{ p: 3 }}>
-        <Alert severity="error" sx={{ mb: 2 }}>
-          {loadError}
-        </Alert>
-        <Button
-          variant="outlined"
-          startIcon={<ArrowBackIcon />}
+      <div className="p-6">
+        <AlertMessage type="error" message={loadError} />
+        <button
           onClick={() => navigate("/parts")}
+          className="mt-4 inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primaryDeep"
         >
+          <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
+          </svg>
           Back to Parts
-        </Button>
-      </Box>
+        </button>
+      </div>
     );
   }
 
   return (
-    <Box sx={{ p: 3, width: "100%", maxWidth: "none" }}>
+    <div className="p-6 w-full max-w-none">
       {/* Breadcrumbs */}
-      <Breadcrumbs sx={{ mb: 2 }}>
-        <Link
-          color="inherit"
-          href="#"
-          onClick={(e) => {
-            e.preventDefault();
-            navigate("/dashboard");
-          }}
-          sx={{ textDecoration: "none" }}
-        >
-          Dashboard
-        </Link>
-        <Link
-          color="inherit"
-          href="#"
-          onClick={(e) => {
-            e.preventDefault();
-            navigate("/parts");
-          }}
-          sx={{ textDecoration: "none" }}
-        >
-          Parts
-        </Link>
-        <Typography color="text.primary">
-          {isEditMode ? "Edit Part" : "Add New Part"}
-        </Typography>
-      </Breadcrumbs>
+      <nav className="mb-4">
+        <ol className="flex items-center space-x-2 text-sm text-gray-500">
+          <li>
+            <button
+              onClick={() => navigate("/dashboard")}
+              className="hover:text-primaryDeep transition-colors"
+            >
+              Dashboard
+            </button>
+          </li>
+          <li>
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+            </svg>
+          </li>
+          <li>
+            <button
+              onClick={() => navigate("/parts")}
+              className="hover:text-primaryDeep transition-colors"
+            >
+              Parts
+            </button>
+          </li>
+          <li>
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+            </svg>
+          </li>
+          <li className="text-gray-900">
+            {isEditMode ? "Edit Part" : "Add New Part"}
+          </li>
+        </ol>
+      </nav>
 
       {/* Header */}
-      <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
-        <Button
-          variant="text"
-          startIcon={<ArrowBackIcon />}
+      <div className="flex items-center mb-6">
+        <button
           onClick={handleCancel}
-          sx={{ mr: 2 }}
+          className="mr-4 inline-flex items-center px-3 py-1.5 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
         >
+          <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
+          </svg>
           Back
-        </Button>
-        <Typography variant="h4" component="h1" sx={{ fontWeight: "bold" }}>
+        </button>
+        <h1 className="text-2xl font-bold text-gray-900">
           {isEditMode ? "Edit Part" : "Add New Part"}
-        </Typography>
-      </Box>
+        </h1>
+      </div>
 
       {/* Error Alert */}
-      {submitError && (
-        <Alert severity="error" sx={{ mb: 3 }}>
-          {submitError}
-        </Alert>
-      )}
+      {submitError && <AlertMessage type="error" message={submitError} />}
 
       {/* Main Form Card */}
-      <Card sx={{ width: "100%" }}>
-        <CardContent sx={{ p: 4 }}>
-          <Grid container spacing={4} sx={{ width: "100%" }}>
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 w-full">
+        <div className="p-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full">
             {/* Left Column - Form Fields */}
-            <Grid item xs={12} md={8}>
-              <Typography variant="h6" sx={{ mb: 3, fontWeight: "bold" }}>
+            <div className="lg:col-span-2">
+              <h2 className="text-lg font-semibold text-gray-900 mb-6">
                 Part Information
-              </Typography>
+              </h2>
 
               <FormField
                 label="Part Name"
@@ -213,7 +198,7 @@ export default function AddEditPartPage() {
                 placeholder="0.00"
                 required
                 InputProps={{
-                  startAdornment: <Typography sx={{ mr: 1 }}>$</Typography>,
+                  startAdornment: <span className="text-gray-500 mr-2">$</span>,
                 }}
               />
 
@@ -228,15 +213,15 @@ export default function AddEditPartPage() {
                 rows={4}
                 helperText="Detailed description of the part"
               />
-            </Grid>
+            </div>
 
             {/* Right Column - Image Upload */}
-            <Grid item xs={12} md={4}>
-              <Typography variant="h6" sx={{ mb: 3, fontWeight: "bold" }}>
+            <div className="lg:col-span-1">
+              <h2 className="text-lg font-semibold text-gray-900 mb-6">
                 Part Image
-              </Typography>
+              </h2>
 
-              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+              <div className="flex flex-col">
                 <FileUpload
                   label="Upload Image"
                   value={imagePreview}
@@ -246,50 +231,43 @@ export default function AddEditPartPage() {
                   accept="image/*"
                   maxSize={5 * 1024 * 1024} // 5MB
                 />
-              </Box>
-            </Grid>
-          </Grid>
+              </div>
+            </div>
+          </div>
 
-          <Divider sx={{ my: 4 }} />
+          <hr className="my-8 border-gray-200" />
 
           {/* Action Buttons */}
-          <Box sx={{ display: "flex", gap: 2, justifyContent: "flex-end" }}>
+          <div className="flex gap-3 justify-end">
             <Button
+              text="Reset"
               variant="outlined"
               onClick={handleReset}
               disabled={loading}
-              sx={{ minWidth: 120 }}
-            >
-              Reset
-            </Button>
+              fullWidth={false}
+            />
 
             <Button
+              text="Cancel"
               variant="outlined"
               onClick={handleCancel}
               disabled={loading}
-              sx={{ minWidth: 120 }}
-            >
-              Cancel
-            </Button>
+              fullWidth={false}
+            />
 
             <Button
+              text={loading ? "Saving..." : isEditMode ? "Update Part" : "Create Part"}
               variant="contained"
-              startIcon={loading ? <CircularProgress size={20} /> : <SaveIcon />}
               onClick={handleSave}
               disabled={loading}
-              sx={{
-                minWidth: 120,
-                backgroundColor: "#3b82f6",
-                "&:hover": {
-                  backgroundColor: "#2563eb",
-                },
-              }}
-            >
-              {loading ? "Saving..." : isEditMode ? "Update Part" : "Create Part"}
-            </Button>
-          </Box>
-        </CardContent>
-      </Card>
-    </Box>
+              fullWidth={false}
+              startIcon={loading && (
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+              )}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

@@ -1,19 +1,4 @@
 import React, { useState, useRef } from "react";
-import {
-  Box,
-  Button,
-  Typography,
-  Card,
-  CardMedia,
-  IconButton,
-  FormControl,
-  FormHelperText,
-} from "@mui/material";
-import {
-  CloudUpload as CloudUploadIcon,
-  Delete as DeleteIcon,
-  Image as ImageIcon,
-} from "@mui/icons-material";
 
 const FileUpload = ({
   label = "Upload Image",
@@ -89,13 +74,10 @@ const FileUpload = ({
   };
 
   return (
-    <FormControl fullWidth error={!!error} sx={{ mb: 2, width: '100%' }}>
-      <Typography
-        variant="subtitle1"
-        sx={{ mb: 1, fontWeight: 500, color: error ? "error.main" : "text.primary" }}
-      >
-        {label} {required && "*"}
-      </Typography>
+    <div className="mb-4 w-full">
+      <label className={`block text-sm font-medium mb-2 ${error ? 'text-red-600' : 'text-gray-700'}`}>
+        {label} {required && <span className="text-red-500">*</span>}
+      </label>
 
       {/* File Input */}
       <input
@@ -103,96 +85,69 @@ const FileUpload = ({
         type="file"
         accept={accept}
         onChange={handleFileChange}
-        style={{ display: "none" }}
+        className="hidden"
       />
 
       {/* Upload Area or Preview */}
       {preview ? (
-        <Card sx={{ position: "relative", width: '100%', maxWidth: '100%' }}>
-          <CardMedia
-            component="img"
-            height="200"
-            image={preview}
+        <div className="relative w-full">
+          <img
+            src={preview}
             alt="Preview"
-            sx={{ objectFit: "cover", width: '100%' }}
+            className="w-full h-48 object-cover rounded-lg shadow-sm"
           />
-          <IconButton
+          <button
             onClick={handleRemove}
-            sx={{
-              position: "absolute",
-              top: 8,
-              right: 8,
-              backgroundColor: "rgba(0,0,0,0.5)",
-              color: "white",
-              "&:hover": {
-                backgroundColor: "rgba(0,0,0,0.7)",
-              },
-            }}
-            size="small"
+            className="absolute top-2 right-2 bg-black bg-opacity-50 text-white rounded-full p-1.5 hover:bg-opacity-70 transition-all"
           >
-            <DeleteIcon />
-          </IconButton>
-        </Card>
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+            </svg>
+          </button>
+        </div>
       ) : (
-        <Box
+        <div
           onClick={handleClick}
           onDragEnter={handleDrag}
           onDragLeave={handleDrag}
           onDragOver={handleDrag}
           onDrop={handleDrop}
-          sx={{
-            border: `2px dashed ${error ? "#f44336" : dragActive ? "#3b82f6" : "#d1d5db"}`,
-            borderRadius: 2,
-            p: 4,
-            textAlign: "center",
-            cursor: "pointer",
-            backgroundColor: dragActive ? "#eff6ff" : "#fafafa",
-            transition: "all 0.2s ease",
-            width: '100%',
-            minHeight: 200,
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-            "&:hover": {
-              backgroundColor: "#f3f4f6",
-              borderColor: "#3b82f6",
-            },
-          }}
+          className={`
+            border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-all duration-200
+            w-full min-h-48 flex flex-col justify-center items-center
+            ${error ? 'border-red-500' : dragActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-blue-500 hover:bg-gray-50'}
+          `}
         >
-          <ImageIcon sx={{ fontSize: 48, color: "text.secondary", mb: 1 }} />
-          <Typography variant="h6" sx={{ mb: 1, color: "text.secondary" }}>
+          <div className="text-gray-400 mb-4">
+            <svg className="w-12 h-12 mx-auto" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
+            </svg>
+          </div>
+          <h3 className="text-lg font-medium text-gray-700 mb-2">
             Drag & drop an image here
-          </Typography>
-          <Typography variant="body2" sx={{ mb: 2, color: "text.secondary" }}>
-            or
-          </Typography>
-          <Button
-            variant="outlined"
-            startIcon={<CloudUploadIcon />}
-            sx={{
-              borderColor: "#3b82f6",
-              color: "#3b82f6",
-              "&:hover": {
-                borderColor: "#2563eb",
-                backgroundColor: "#eff6ff",
-              },
-            }}
+          </h3>
+          <p className="text-sm text-gray-500 mb-4">or</p>
+          <button
+            type="button"
+            className="inline-flex items-center px-4 py-2 border-2 border-blue-500 text-blue-500 bg-transparent rounded-lg hover:bg-blue-500 hover:text-white transition-all duration-200"
           >
+            <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M5.5 13a3.5 3.5 0 01-.369-6.98 4 4 0 117.753-1.977A4.5 4.5 0 1113.5 13H11V9.413l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13H5.5z" />
+            </svg>
             Browse Files
-          </Button>
-          <Typography variant="caption" display="block" sx={{ mt: 1, color: "text.secondary" }}>
+          </button>
+          <p className="text-xs text-gray-500 mt-2">
             Supported formats: JPG, PNG, GIF (Max {Math.round(maxSize / 1024 / 1024)}MB)
-          </Typography>
-        </Box>
+          </p>
+        </div>
       )}
 
       {(error || helperText) && (
-        <FormHelperText sx={{ mt: 1 }}>
+        <p className={`mt-2 text-sm ${error ? 'text-red-600' : 'text-gray-500'}`}>
           {error || helperText}
-        </FormHelperText>
+        </p>
       )}
-    </FormControl>
+    </div>
   );
 };
 

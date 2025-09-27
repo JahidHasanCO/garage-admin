@@ -1,77 +1,67 @@
-import { Button as MuiButton } from "@mui/material";
-import { AppColors } from "../theme/colors";
-
 export default function Button({
   text,
   onClick,
   loading = false,
-  variant = "contained", // default
+  variant = "contained", // contained, outlined, text
   fullWidth = true,
+  size = "medium", // small, medium, large
+  disabled = false,
+  startIcon,
+  endIcon,
+  color = "primary", // primary, secondary, error, success
+  className = "",
   ...props
 }) {
-  const commonStyles = {
-    borderRadius: "12px",
-    padding: "10px 16px",
-    fontWeight: 600,
-    boxShadow: "none",
-    "&:hover": { boxShadow: "none" },
-    "&:focus": {
-      outline: "none",
-    },
-    "&:focus-visible": {
-      outline: "none",
-    },
+  const baseClasses = "font-semibold rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed";
+  
+  const sizeClasses = {
+    small: "px-3 py-1.5 text-sm",
+    medium: "px-4 py-2 text-base",
+    large: "px-6 py-3 text-lg"
   };
 
-  const variantStyles = {
-    contained: {
-      backgroundColor: AppColors.primaryDeep,
-      color: AppColors.blackColor,
-      "&:hover": {
-        backgroundColor: AppColors.primary,
+  const getVariantClasses = () => {
+    const colorMap = {
+      primary: {
+        contained: "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 disabled:bg-gray-300 disabled:text-gray-500",
+        outlined: "border-2 border-blue-600 text-blue-600 bg-transparent hover:bg-blue-600 hover:text-white focus:ring-blue-500 disabled:border-gray-300 disabled:text-gray-300",
+        text: "text-blue-600 bg-transparent hover:bg-blue-50 focus:ring-blue-500 disabled:text-gray-300"
       },
-      "&:disabled": {
-        backgroundColor: AppColors.grayColor,
-        color: AppColors.blackColor,
+      secondary: {
+        contained: "bg-green-600 text-white hover:bg-green-700 focus:ring-green-500 disabled:bg-gray-300 disabled:text-gray-500",
+        outlined: "border-2 border-green-600 text-green-600 bg-transparent hover:bg-green-600 hover:text-white focus:ring-green-500 disabled:border-gray-300 disabled:text-gray-300",
+        text: "text-green-600 bg-transparent hover:bg-green-50 focus:ring-green-500 disabled:text-gray-300"
       },
-    },
-    outlined: {
-      borderColor: AppColors.primaryDeep,
-      color: AppColors.primaryDeep,
-      backgroundColor: "transparent",
-      "&:hover": {
-        borderColor: AppColors.primary,
-        backgroundColor: "rgba(0,0,0,0.04)",
+      error: {
+        contained: "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 disabled:bg-gray-300 disabled:text-gray-500",
+        outlined: "border-2 border-red-600 text-red-600 bg-transparent hover:bg-red-600 hover:text-white focus:ring-red-500 disabled:border-gray-300 disabled:text-gray-300",
+        text: "text-red-600 bg-transparent hover:bg-red-50 focus:ring-red-500 disabled:text-gray-300"
       },
-      "&:disabled": {
-        borderColor: AppColors.grayColor,
-        color: AppColors.grayColor,
-      },
-    },
-    text: {
-      color: AppColors.primaryDeep,
-      "&:hover": {
-        backgroundColor: "rgba(0,0,0,0.04)",
-      },
-      "&:disabled": {
-        color: AppColors.grayColor,
-      },
-    },
+      success: {
+        contained: "bg-green-600 text-white hover:bg-green-700 focus:ring-green-500 disabled:bg-gray-300 disabled:text-gray-500",
+        outlined: "border-2 border-green-600 text-green-600 bg-transparent hover:bg-green-600 hover:text-white focus:ring-green-500 disabled:border-gray-300 disabled:text-gray-300",
+        text: "text-green-600 bg-transparent hover:bg-green-50 focus:ring-green-500 disabled:text-gray-300"
+      }
+    };
+    return colorMap[color][variant];
   };
+
+  const widthClass = fullWidth ? "w-full" : "";
+  
+  const finalClasses = `${baseClasses} ${sizeClasses[size]} ${getVariantClasses()} ${widthClass} ${className}`.trim();
 
   return (
-    <MuiButton
-      variant={variant}
-      fullWidth={fullWidth}
+    <button
       onClick={onClick}
-      disabled={loading}
-      sx={{
-        ...commonStyles,
-        ...variantStyles[variant],
-      }}
+      disabled={loading || disabled}
+      className={finalClasses}
       {...props}
     >
-      {loading ? "Loading..." : text}
-    </MuiButton>
+      <div className="flex items-center justify-center gap-2">
+        {startIcon && <span className="flex-shrink-0">{startIcon}</span>}
+        <span>{loading ? "Loading..." : text}</span>
+        {endIcon && <span className="flex-shrink-0">{endIcon}</span>}
+      </div>
+    </button>
   );
 }
