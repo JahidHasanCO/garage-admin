@@ -102,7 +102,7 @@ export default function PartsPage() {
 
   if (error) {
     return (
-      <Box sx={{ p: 3 }}>
+      <Box sx={{ p: 3, width: "100%", minHeight: "100vh", flex: 1 }}>
         <Alert
           severity="error"
           sx={{ mb: 2 }}
@@ -119,7 +119,7 @@ export default function PartsPage() {
   }
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ p: 3, width: "100%", minHeight: "100vh", flex: 1 }}>
       {/* Header */}
       <PageHeader
         title="Parts Management"

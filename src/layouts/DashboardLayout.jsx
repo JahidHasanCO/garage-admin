@@ -92,7 +92,7 @@ export default function DashboardLayout() {
         <Toolbar />
 
         {/* Route Content */}
-        <Box sx={{ p: 1 }}>
+        <Box sx={{  p: 1, flexGrow: 1, width: "100%", minHeight: "calc(100vh - 64px)"  }}>
           <Outlet />
         </Box>
       </Box>

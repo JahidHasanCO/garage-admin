@@ -12,16 +12,17 @@ import {
   TableRow,
   Paper,
   CircularProgress,
-  Button,
   Chip,
   Avatar,
 } from "@mui/material";
-import { 
-  Add as AddIcon, 
-  Edit as EditIcon, 
+import {
+  Add as AddIcon,
+  Edit as EditIcon,
   Delete as DeleteIcon,
   Image as ImageIcon,
 } from "@mui/icons-material";
+
+import Button from "../../components/Button";
 
 const PartsTable = ({
   parts,
@@ -50,15 +51,33 @@ const PartsTable = ({
   return (
     <Card>
       <CardContent>
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
-          <Typography variant="h6" component="h2">
-            Parts Inventory
-          </Typography>
-          {searchQuery && (
-            <Typography variant="body2" color="text.secondary">
-              Search results for: "{searchQuery}"
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 2,
+          }}
+        >
+          {/* Left side */}
+          <Box>
+            <Typography variant="h6" component="h2">
+              Parts Inventory
             </Typography>
-          )}
+            {searchQuery && (
+              <Typography variant="body2" color="text.secondary">
+                Search results for: "{searchQuery}"
+              </Typography>
+            )}
+          </Box>
+
+          {/* Right side */}
+          <Button
+            text="Add Part"
+            variant="outlined"
+            onClick={onAddPart}
+            fullWidth={false}
+          />
         </Box>
 
         <TableContainer component={Paper} sx={{ boxShadow: "none" }}>
