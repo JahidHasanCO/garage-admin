@@ -4,6 +4,7 @@ import { useSidebar } from "../contexts/useSidebarContext";
 import {
   HomeIcon,
   CubeIcon,
+  FireIcon,
   Bars3Icon,
   ChevronLeftIcon,
 } from "@heroicons/react/24/solid";
@@ -18,6 +19,11 @@ const menuItems = [
     text: "Parts",
     icon: <CubeIcon className="w-6 h-6" />,
     path: "/parts",
+  },
+  {
+    text: "Fuel Types",
+    icon: <FireIcon className="w-6 h-6" />,
+    path: "/fuel-types",
   },
 ];
 
@@ -57,7 +63,7 @@ export default function Sidebar() {
       {/* Navigation Menu */}
       <nav className="flex-1 px-2 py-4 space-y-1">
         {menuItems.map((item) => {
-          const isSelected = location.pathname === item.path;
+          const isSelected = location.pathname === item.path || location.pathname.startsWith(item.path + "/");
           return (
             <div key={item.text} className="relative group">
               <Link
