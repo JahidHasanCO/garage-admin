@@ -10,6 +10,7 @@ import {
   Bars3Icon,
   ChevronLeftIcon,
   WrenchScrewdriverIcon,
+  RectangleStackIcon,
   BuildingStorefrontIcon,
 } from "@heroicons/react/24/solid";
 
@@ -43,6 +44,11 @@ const menuItems = [
     text: "Services",
     icon: <WrenchScrewdriverIcon className="w-6 h-6" />,
     path: "/services",
+  },
+  {
+    text: "Service Packages",
+    icon: <RectangleStackIcon className="w-6 h-6" />,
+    path: "/service-packages",
   },
   {
     text: "Garages",

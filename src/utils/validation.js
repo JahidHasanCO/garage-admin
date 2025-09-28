@@ -195,3 +195,42 @@ export const validateGarageForm = (formData) => {
   
   return errors;
 };
+
+// Service Package-specific validation schema
+export const validateServicePackageForm = (formData) => {
+  const errors = {};
+  
+  // Validate name
+  const nameError = validateRequired(formData.name, "Package name");
+  if (nameError) errors.name = nameError;
+  else if (formData.name.length > 100) {
+    errors.name = "Package name cannot exceed 100 characters";
+  }
+  
+  // Validate price
+  const priceError = validateNumber(formData.price, "Price", 0);
+  if (priceError) errors.price = priceError;
+  
+  // Validate duration (optional)
+  if (formData.duration && formData.duration !== '') {
+    const durationError = validateNumber(formData.duration, "Duration", 0);
+    if (durationError) errors.duration = durationError;
+  }
+  
+  // Validate services (at least one service required)
+  if (!formData.services || formData.services.length === 0) {
+    errors.services = "At least one service must be selected";
+  }
+  
+  // Validate garages (at least one garage required)
+  if (!formData.garages || formData.garages.length === 0) {
+    errors.garages = "At least one garage must be selected";
+  }
+  
+  // Validate description
+  if (formData.description && formData.description.length > 1000) {
+    errors.description = "Description cannot exceed 1000 characters";
+  }
+  
+  return errors;
+};

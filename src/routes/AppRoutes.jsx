@@ -12,6 +12,8 @@ import VehiclesPage from "../pages/Vehicles/VehiclesPage";
 import AddEditVehiclePage from "../pages/Vehicles/AddEditVehiclePage";
 import ServicesPage from "../pages/Services/ServicesPage";
 import AddEditServicePage from "../pages/Services/AddEditServicePage";
+import ServicePackagesPage from "../pages/ServicePackages/ServicePackagesPage";
+import AddEditServicePackagePage from "../pages/ServicePackages/AddEditServicePackagePage";
 import GaragesPage from "../pages/Garages/GaragesPage";
 import AddEditGaragePage from "../pages/Garages/AddEditGaragePage";
 import { useAuth } from "../contexts/useAuthContext";
@@ -71,6 +73,14 @@ export default function AppRoutes() {
         <Route index element={<ServicesPage />} />
         <Route path="add" element={<AddEditServicePage />} />
         <Route path="edit/:id" element={<AddEditServicePage />} />
+      </Route>
+      <Route
+        path={RouteNames.SERVICE_PACKAGES}
+        element={token ? <DashboardLayout /> : <Navigate to={RouteNames.LOGIN} replace />}
+      >
+        <Route index element={<ServicePackagesPage />} />
+        <Route path="add" element={<AddEditServicePackagePage />} />
+        <Route path="edit/:id" element={<AddEditServicePackagePage />} />
       </Route>
       <Route
         path={RouteNames.GARAGES}
