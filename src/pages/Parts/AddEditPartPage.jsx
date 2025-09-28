@@ -15,6 +15,7 @@ export default function AddEditPartPage() {
 
   const [initialLoading, setInitialLoading] = useState(isEditMode);
   const [loadError, setLoadError] = useState(null);
+  const [partData, setPartData] = useState(null);
 
   const {
     formData,
@@ -26,19 +27,15 @@ export default function AddEditPartPage() {
     handleImageChange,
     handleSubmit,
     resetForm,
-  } = usePartForm(null, id);
+  } = usePartForm(partData, id);
 
   // Load existing part data for edit mode
   useEffect(() => {
     const loadPartData = async () => {
       try {
         setInitialLoading(true);
-        await partsService.getPartById(id);
-
-        // The usePartForm hook will handle setting the form data
-        // We need to pass it through the hook's initialization
-        window.location.reload(); // Temporary solution - in production, you'd handle this better
-
+        const data = await partsService.getPartById(id);
+        setPartData(data);
       } catch (error) {
         setLoadError(error.message);
       } finally {
