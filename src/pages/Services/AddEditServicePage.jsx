@@ -79,21 +79,20 @@ const AddEditServicePage = () => {
   }, [formData.parts_needed]);
 
   const handleSave = async () => {
-    await handleSubmit(
-      () => {
-        // Success callback
-        navigate("/services", {
-          state: {
-            message: `Service ${isEditing ? "updated" : "created"} successfully!`,
-            severity: "success"
-          }
-        });
-      },
-      (error) => {
-        // Error callback - handled by the hook
-        console.error("Save error:", error);
-      }
-    );
+    const result = await handleSubmit();
+    
+    if (result && result.success) {
+      // Success - navigate to services list with success message
+      navigate("/services", {
+        state: {
+          message: `Service ${isEditing ? "updated" : "created"} successfully!`,
+          severity: "success"
+        }
+      });
+    } else if (result && !result.success) {
+      // Error is already handled by the hook and displayed via submitError
+      console.error("Save error:", result.error);
+    }
   };
 
   const handleCancel = () => {
