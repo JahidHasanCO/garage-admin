@@ -1,22 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeftIcon, PhotoIcon } from '@heroicons/react/24/outline';
+import { CubeIcon } from '@heroicons/react/24/outline';
 import PageHeader from '../../components/PageHeader';
-import InputField from '../../components/InputField';
+import FormField from '../../components/forms/FormField';
 import Button from '../../components/Button';
 import FileUpload from '../../components/forms/FileUpload';
 import AlertMessage from '../../components/AlertMessage';
 import PartsSelector from '../../components/selectors/PartsSelector';
 import { useServiceForm } from '../../hooks/useServiceForm';
 import { partsService } from '../../api/partsService';
-import { RouteNames } from '../../routes/RouteNames';
 
 const AddEditServicePage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const isEditing = !!id;
 
-  const [alert, setAlert] = useState({ show: false, message: '', type: 'success' });
+  const [initialLoading, setInitialLoading] = useState(isEditing);
+  const [loadError, setLoadError] = useState(null);
+  const [serviceData, setServiceData] = useState(null);
   const [partsSelector, setPartsSelector] = useState({ open: false });
   const [selectedPartsDetails, setSelectedPartsDetails] = useState([]);
 
@@ -29,8 +30,27 @@ const AddEditServicePage = () => {
     handleImageChange,
     handlePartsChange,
     handleSubmit,
-    setSubmitError
-  } = useServiceForm(id);
+    resetForm
+  } = useServiceForm(serviceData, id);
+
+  // Load existing service data for edit mode
+  useEffect(() => {
+    const loadServiceData = async () => {
+      if (isEditing && id) {
+        try {
+          setInitialLoading(true);
+          // Use the hook's built-in loading instead of separate API call
+          setServiceData({ _id: id });
+        } catch (error) {
+          setLoadError(error.message);
+        } finally {
+          setInitialLoading(false);
+        }
+      }
+    };
+
+    loadServiceData();
+  }, [id, isEditing]);
 
   // Fetch selected parts details when parts selection changes
   useEffect(() => {
@@ -58,29 +78,30 @@ const AddEditServicePage = () => {
     fetchPartsDetails();
   }, [formData.parts_needed]);
 
-  const showAlert = (message, type = 'success') => {
-    setAlert({ show: true, message, type });
-    setTimeout(() => setAlert({ show: false, message: '', type: 'success' }), 5000);
+  const handleSave = async () => {
+    await handleSubmit(
+      () => {
+        // Success callback
+        navigate("/services", {
+          state: {
+            message: `Service ${isEditing ? "updated" : "created"} successfully!`,
+            severity: "success"
+          }
+        });
+      },
+      (error) => {
+        // Error callback - handled by the hook
+        console.error("Save error:", error);
+      }
+    );
   };
 
-  const handleBackToServices = () => {
-    navigate(RouteNames.SERVICES);
+  const handleCancel = () => {
+    navigate("/services");
   };
 
-  const handleFormSubmit = async (e) => {
-    e.preventDefault();
-    setSubmitError(null);
-
-    const result = await handleSubmit();
-
-    if (result.success) {
-      showAlert(result.message, 'success');
-      setTimeout(() => {
-        navigate(RouteNames.SERVICES);
-      }, 2000);
-    } else {
-      showAlert(result.error || 'An error occurred', 'error');
-    }
+  const handleReset = () => {
+    resetForm();
   };
 
   const handlePartsSelect = (selectedPartIds) => {
@@ -90,11 +111,6 @@ const AddEditServicePage = () => {
   const handleRemovePart = (partIdToRemove) => {
     const updatedParts = formData.parts_needed.filter(id => id !== partIdToRemove);
     handlePartsChange(updatedParts);
-  };
-
-  const handleAlertClose = () => {
-    setAlert({ show: false, message: '', type: 'success' });
-    setSubmitError(null);
   };
 
   const formatCurrency = (amount) => {
@@ -108,228 +124,262 @@ const AddEditServicePage = () => {
     return selectedPartsDetails.reduce((total, part) => total + (part.price || 0), 0);
   };
 
+  if (initialLoading) {
+    return (
+      <div className="flex justify-center items-center h-96">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primaryDeep"></div>
+        <span className="ml-4 text-lg font-medium">Loading service data...</span>
+      </div>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <div className="p-6">
+        <AlertMessage type="error" message={loadError} />
+        <button
+          onClick={() => navigate("/services")}
+          className="mt-4 inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primaryDeep"
+        >
+          <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
+          </svg>
+          Back to Services
+        </button>
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-6">
+    <div className="p-4 w-full max-w-none">
       <PageHeader
-        title={isEditing ? 'Edit Service' : 'Add New Service'}
-        subtitle={isEditing ? 'Update service information' : 'Create a new service for your garage'}
+        title={isEditing ? "Edit Service" : "Add New Service"}
+        breadcrumbs={[
+          { label: "Dashboard", path: "/dashboard" },
+          { label: "Services", path: "/services" },
+          { label: isEditing ? "Edit Service" : "Add New Service" }
+        ]}
+        showBackButton
+        onBack={handleCancel}
       />
 
-      {/* Alert Messages */}
-      {(alert.show || submitError) && (
-        <AlertMessage
-          type={submitError ? 'error' : alert.type}
-          message={submitError || alert.message}
-          onClose={handleAlertClose}
-        />
-      )}
+      {/* Error Alert */}
+      {submitError && <AlertMessage type="error" message={submitError} />}
 
-      <div className="bg-white shadow rounded-lg p-6">
-        {/* Back Button */}
-        <div className="mb-6">
-          <Button
-            onClick={handleBackToServices}
-            variant="outline"
-            size="sm"
-            className="text-gray-600 hover:text-gray-900"
-          >
-            <ArrowLeftIcon className="h-4 w-4 mr-2" />
-            Back to Services
-          </Button>
-        </div>
+      {/* Main Form Card */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 w-full">
+        <div className="p-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full">
+            {/* Left Column - Form Fields */}
+            <div className="lg:col-span-2 space-y-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-6">
+                Service Information
+              </h2>
 
-        <form onSubmit={handleFormSubmit} className="space-y-6">
-          {/* Service Image */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Service Image
-            </label>
-            <FileUpload
-              onFileSelect={handleImageChange}
-              accept="image/*"
-              maxSize={5 * 1024 * 1024} // 5MB
-              preview={formData.imagePreview}
-              error={errors.image}
-              className="max-w-md"
-            />
-          </div>
+              <FormField
+                label="Service Name"
+                name="name"
+                value={formData.name}
+                onChange={(e) => handleInputChange('name', e.target.value)}
+                error={errors.name}
+                placeholder="Enter service name"
+                required
+              />
 
-          {/* Service Name */}
-          <InputField
-            label="Service Name"
-            name="name"
-            value={formData.name}
-            onChange={(e) => handleInputChange('name', e.target.value)}
-            error={errors.name}
-            required
-            placeholder="Enter service name"
-          />
+              <FormField
+                label="Description"
+                name="description"
+                value={formData.description}
+                onChange={(e) => handleInputChange('description', e.target.value)}
+                error={errors.description}
+                placeholder="Enter service description"
+                multiline
+                rows={4}
+                helperText="Detailed description of the service"
+              />
 
-          {/* Service Description */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Description
-            </label>
-            <textarea
-              value={formData.description}
-              onChange={(e) => handleInputChange('description', e.target.value)}
-              rows={4}
-              className={`w-full px-3 py-2 border rounded-md shadow-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500 ${
-                errors.description ? 'border-red-500' : 'border-gray-300'
-              }`}
-              placeholder="Enter service description"
-            />
-            {errors.description && (
-              <p className="mt-1 text-sm text-red-600">{errors.description}</p>
-            )}
-          </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  label="Price ($)"
+                  name="price"
+                  type="number"
+                  value={formData.price}
+                  onChange={(e) => handleInputChange('price', e.target.value)}
+                  error={errors.price}
+                  required
+                  placeholder="0.00"
+                  InputProps={{
+                    min: 0,
+                    step: 0.01
+                  }}
+                />
 
-          {/* Price and Estimated Time */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <InputField
-              label="Price ($)"
-              name="price"
-              type="number"
-              value={formData.price}
-              onChange={(e) => handleInputChange('price', e.target.value)}
-              error={errors.price}
-              required
-              min="0"
-              step="0.01"
-              placeholder="0.00"
-            />
+                <FormField
+                  label="Estimated Time (minutes)"
+                  name="estimated_time"
+                  type="number"
+                  value={formData.estimated_time}
+                  onChange={(e) => handleInputChange('estimated_time', e.target.value)}
+                  error={errors.estimated_time}
+                  required
+                  placeholder="Enter time in minutes"
+                  InputProps={{
+                    min: 0
+                  }}
+                />
+              </div>
 
-            <InputField
-              label="Estimated Time (minutes)"
-              name="estimated_time"
-              type="number"
-              value={formData.estimated_time}
-              onChange={(e) => handleInputChange('estimated_time', e.target.value)}
-              error={errors.estimated_time}
-              required
-              min="0"
-              placeholder="Enter time in minutes"
-            />
-          </div>
+              <div className="max-w-md">
+                <FormField
+                  label="Discount (%)"
+                  name="discount"
+                  type="number"
+                  value={formData.discount}
+                  onChange={(e) => handleInputChange('discount', e.target.value)}
+                  error={errors.discount}
+                  placeholder="0.00"
+                  helperText="Optional discount percentage"
+                  InputProps={{
+                    min: 0,
+                    max: 100,
+                    step: 0.01
+                  }}
+                />
+              </div>
 
-          {/* Discount */}
-          <div className="max-w-md">
-            <InputField
-              label="Discount (%)"
-              name="discount"
-              type="number"
-              value={formData.discount}
-              onChange={(e) => handleInputChange('discount', e.target.value)}
-              error={errors.discount}
-              min="0"
-              max="100"
-              step="0.01"
-              placeholder="0.00"
-            />
-          </div>
-
-          {/* Parts Needed Section */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Parts Needed
-            </label>
-            
-            <div className="space-y-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setPartsSelector({ open: true })}
-                className="w-full sm:w-auto"
-              >
-                <PhotoIcon className="h-4 w-4 mr-2" />
-                Select Parts ({formData.parts_needed.length})
-              </Button>
-
-              {/* Selected Parts Display */}
-              {selectedPartsDetails.length > 0 && (
-                <div className="border rounded-lg p-4 bg-gray-50">
-                  <h4 className="text-sm font-medium text-gray-900 mb-3">
-                    Selected Parts ({selectedPartsDetails.length})
-                  </h4>
-                  
-                  <div className="space-y-2 mb-3">
-                    {selectedPartsDetails.map((part) => (
-                      <div
-                        key={part._id}
-                        className="flex items-center justify-between bg-white p-3 rounded border"
-                      >
-                        <div className="flex items-center space-x-3">
-                          <div className="w-10 h-10 bg-gray-200 rounded flex items-center justify-center overflow-hidden">
-                            {part.image ? (
-                              <img
-                                src={part.image}
-                                alt={part.name}
-                                className="w-full h-full object-cover"
-                              />
-                            ) : (
-                              <span className="text-gray-400 text-xs">No Image</span>
-                            )}
-                          </div>
-                          <div>
-                            <p className="text-sm font-medium text-gray-900">{part.name}</p>
-                            <p className="text-xs text-gray-500">SKU: {part.sku || 'N/A'}</p>
-                          </div>
-                        </div>
-                        <div className="flex items-center space-x-3">
-                          <span className="text-sm font-semibold text-green-600">
-                            {formatCurrency(part.price)}
-                          </span>
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleRemovePart(part._id)}
-                            className="text-red-600 hover:text-red-800"
-                          >
-                            Remove
-                          </Button>
-                        </div>
+              {/* Parts Needed Selector */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Parts Needed
+                </label>
+                {selectedPartsDetails.length > 0 ? (
+                  <div className="space-y-3">
+                    <div className="flex items-center p-3 border border-gray-300 rounded-lg bg-gray-50">
+                      <CubeIcon className="w-8 h-8 text-gray-400 mr-3" />
+                      <div className="flex-1">
+                        <p className="font-medium text-gray-900">{selectedPartsDetails.length} parts selected</p>
+                        <p className="text-sm text-gray-500">Total cost: {formatCurrency(calculateTotalPartsPrice())}</p>
                       </div>
-                    ))}
-                  </div>
-
-                  {/* Total Parts Cost */}
-                  <div className="border-t pt-3">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm font-medium text-gray-700">Total Parts Cost:</span>
-                      <span className="text-sm font-bold text-green-600">
-                        {formatCurrency(calculateTotalPartsPrice())}
-                      </span>
+                      <Button
+                        text="Change Parts"
+                        variant="outlined"
+                        onClick={() => setPartsSelector({ open: true })}
+                        fullWidth={false}
+                      />
+                    </div>
+                    
+                    {/* Selected Parts List */}
+                    <div className="border border-gray-200 rounded-lg p-4 bg-gray-50 max-h-64 overflow-y-auto">
+                      <h4 className="text-sm font-medium text-gray-800 mb-3">
+                        Selected Parts ({selectedPartsDetails.length})
+                      </h4>
+                      
+                      <div className="space-y-2">
+                        {selectedPartsDetails.map((part) => (
+                          <div
+                            key={part._id}
+                            className="flex items-center justify-between bg-white p-3 rounded border border-gray-200"
+                          >
+                            <div className="flex items-center space-x-3">
+                              <div className="w-10 h-10 bg-gray-200 rounded flex items-center justify-center overflow-hidden">
+                                {part.image ? (
+                                  <img
+                                    src={part.image}
+                                    alt={part.name}
+                                    className="w-full h-full object-cover"
+                                  />
+                                ) : (
+                                  <CubeIcon className="w-5 h-5 text-gray-400" />
+                                )}
+                              </div>
+                              <div>
+                                <p className="text-sm font-medium text-gray-900">{part.name}</p>
+                                <p className="text-xs text-gray-500">SKU: {part.sku || 'N/A'}</p>
+                              </div>
+                            </div>
+                            <div className="flex items-center space-x-3">
+                              <span className="text-sm font-semibold text-green-600">
+                                {formatCurrency(part.price)}
+                              </span>
+                              <Button
+                                text="Remove"
+                                variant="outlined"
+                                onClick={() => handleRemovePart(part._id)}
+                                fullWidth={false}
+                                className="text-red-600 hover:text-red-800"
+                              />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
+                ) : (
+                  <Button
+                    text="Select Parts"
+                    variant="outlined"
+                    onClick={() => setPartsSelector({ open: true })}
+                    fullWidth={true}
+                  />
+                )}
+                {errors.parts_needed && (
+                  <p className="mt-1 text-sm text-red-600">{errors.parts_needed}</p>
+                )}
+              </div>
+            </div>
 
-              {errors.parts_needed && (
-                <p className="text-sm text-red-600">{errors.parts_needed}</p>
-              )}
+            {/* Right Column - Image Upload */}
+            <div className="lg:col-span-1">
+              <h2 className="text-lg font-semibold text-gray-900 mb-6">
+                Service Image
+              </h2>
+
+              <div className="flex flex-col">
+                <FileUpload
+                  label="Upload Image"
+                  value={formData.imagePreview}
+                  onChange={handleImageChange}
+                  error={errors.image}
+                  helperText="Upload an image of the service (optional)"
+                  accept="image/*"
+                  maxSize={5 * 1024 * 1024} // 5MB
+                />
+              </div>
             </div>
           </div>
 
-          {/* Form Actions */}
-          <div className="flex items-center justify-end space-x-4 pt-6 border-t border-gray-200">
+          <hr className="my-8 border-gray-200" />
+
+          {/* Action Buttons */}
+          <div className="flex gap-3 justify-end">
             <Button
-              type="button"
-              variant="outline"
-              onClick={handleBackToServices}
+              text="Reset"
+              variant="outlined"
+              onClick={handleReset}
               disabled={loading}
-            >
-              Cancel
-            </Button>
-            
+              fullWidth={false}
+            />
+
             <Button
-              type="submit"
+              text="Cancel"
+              variant="outlined"
+              onClick={handleCancel}
               disabled={loading}
-            >
-              {loading ? 'Saving...' : isEditing ? 'Update Service' : 'Create Service'}
-            </Button>
+              fullWidth={false}
+            />
+
+            <Button
+              text={loading ? "Saving..." : isEditing ? "Update Service" : "Create Service"}
+              variant="contained"
+              onClick={handleSave}
+              disabled={loading}
+              fullWidth={false}
+              startIcon={loading && (
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+              )}
+            />
           </div>
-        </form>
+        </div>
       </div>
 
       {/* Parts Selector Modal */}

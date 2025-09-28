@@ -9,8 +9,8 @@ import {
   TruckIcon,
   Bars3Icon,
   ChevronLeftIcon,
+  WrenchScrewdriverIcon,
 } from "@heroicons/react/24/solid";
-import { WrenchScrewdriverIcon } from "@heroicons/react/24/outline";
 
 const menuItems = [
   {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { XMarkIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon, MagnifyingGlassIcon, CheckIcon } from '@heroicons/react/24/solid';
+import { CubeIcon } from '@heroicons/react/24/outline';
 import Button from '../Button';
-import PaginationControls from '../PaginationControls';
 import { partsService } from '../../api/partsService';
 
 const PartsSelector = ({ 
@@ -56,22 +56,26 @@ const PartsSelector = ({
   // Fetch parts when modal opens or search changes
   useEffect(() => {
     if (isOpen) {
-      const timeoutId = setTimeout(() => {
-        fetchParts(1, searchQuery);
-      }, 300);
-      
-      return () => clearTimeout(timeoutId);
+      fetchParts(1, '');
+      setSearchQuery('');
     }
-  }, [isOpen, searchQuery]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isOpen]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Handle search with debounce
+  const handleSearch = (e) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+    // Debounce search
+    const timeoutId = setTimeout(() => {
+      fetchParts(1, value);
+    }, 300);
+    
+    return () => clearTimeout(timeoutId);
+  };
 
   // Handle page change
   const handlePageChange = (newPage) => {
     fetchParts(newPage, searchQuery);
-  };
-
-  // Handle search
-  const handleSearch = (e) => {
-    setSearchQuery(e.target.value);
   };
 
   // Handle part selection toggle
@@ -102,140 +106,158 @@ const PartsSelector = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-hidden">
+      <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[80vh] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
+        <div className="flex justify-between items-center p-6 border-b border-gray-200">
+          <div>
+            <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
+            <p className="text-sm text-gray-600 mt-1">
+              Selected: {tempSelectedParts.length} part{tempSelectedParts.length !== 1 ? 's' : ''}
+            </p>
+          </div>
           <button
             onClick={handleCancel}
             className="text-gray-400 hover:text-gray-600 transition-colors"
           >
-            <XMarkIcon className="h-6 w-6" />
+            <XMarkIcon className="w-6 h-6" />
           </button>
         </div>
 
         {/* Search */}
-        <div className="relative mb-4">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
+        <div className="p-6 border-b border-gray-200">
+          <div className="relative">
+            <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search parts..."
+              value={searchQuery}
+              onChange={handleSearch}
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-transparent"
+            />
           </div>
-          <input
-            type="text"
-            placeholder="Search parts..."
-            value={searchQuery}
-            onChange={handleSearch}
-            className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-          />
-        </div>
-
-        {/* Selected parts count */}
-        <div className="mb-4 text-sm text-gray-600">
-          Selected: {tempSelectedParts.length} part{tempSelectedParts.length !== 1 ? 's' : ''}
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto min-h-0" style={{ maxHeight: 'calc(90vh - 240px)' }}>
+        <div className="flex-1 overflow-auto p-6">
           {loading ? (
-            <div className="flex items-center justify-center h-32">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <div className="flex justify-center items-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+              <span className="ml-2 text-gray-600">Loading parts...</span>
             </div>
           ) : error ? (
             <div className="text-center py-8">
               <p className="text-red-600 mb-4">{error}</p>
               <Button
+                text="Retry"
+                variant="outlined"
                 onClick={() => fetchParts(pagination.page, searchQuery)}
-                variant="outline"
-                size="sm"
-              >
-                Retry
-              </Button>
+                fullWidth={false}
+              />
             </div>
           ) : parts.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
-              {searchQuery ? 'No parts found matching your search.' : 'No parts available.'}
+              {searchQuery ? 'No parts found matching your search' : 'No parts available'}
             </div>
           ) : (
-            <>
-              {/* Parts Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-6">
-                {parts.map((part) => {
-                  const isSelected = tempSelectedParts.includes(part._id);
-                  
-                  return (
-                    <div
-                      key={part._id}
-                      onClick={() => handlePartToggle(part._id)}
-                      className={`relative p-4 border-2 rounded-lg cursor-pointer transition-all duration-200 hover:shadow-md ${
-                        isSelected
-                          ? 'border-blue-500 bg-blue-50 shadow-sm'
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                    >
-                      {/* Selection indicator */}
-                      {isSelected && (
-                        <div className="absolute top-2 right-2 w-5 h-5 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs">
-                          ✓
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {parts.map((part) => {
+                const isSelected = tempSelectedParts.includes(part._id);
+                
+                return (
+                  <div
+                    key={part._id}
+                    onClick={() => handlePartToggle(part._id)}
+                    className={`relative flex flex-col items-center p-4 border-2 rounded-lg cursor-pointer transition-all duration-200 hover:shadow-md ${
+                      isSelected
+                        ? 'border-primary-600 bg-blue-50 shadow-md'
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    {/* Selection indicator */}
+                    {isSelected && (
+                      <div className="absolute top-2 right-2 bg-primary-600 rounded-full p-1">
+                        <CheckIcon className="w-4 h-4 text-white" />
+                      </div>
+                    )}
+                    
+                    {/* Part image */}
+                    <div className="w-16 h-16 mb-3 flex items-center justify-center">
+                      {part.image ? (
+                        <img
+                          src={part.image}
+                          alt={part.name}
+                          className="w-full h-full object-contain rounded-lg"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gray-200 rounded-lg flex items-center justify-center">
+                          <CubeIcon className="w-8 h-8 text-gray-400" />
                         </div>
                       )}
-                      
-                      {/* Part image */}
-                      <div className="w-16 h-16 mx-auto mb-3 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
-                        {part.image ? (
-                          <img
-                            src={part.image}
-                            alt={part.name}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                            <span className="text-gray-400 text-xs">No Image</span>
-                          </div>
-                        )}
-                      </div>
-                      
-                      {/* Part info */}
-                      <div className="text-center">
-                        <h3 className="font-medium text-gray-900 text-sm mb-1 line-clamp-2">
-                          {part.name}
-                        </h3>
-                        <p className="text-xs text-gray-500 mb-1">
-                          SKU: {part.sku || 'N/A'}
-                        </p>
-                        <p className="text-sm font-semibold text-blue-600">
-                          ${part.price?.toFixed(2) || '0.00'}
-                        </p>
-                      </div>
                     </div>
-                  );
-                })}
-              </div>
-
-              {/* Pagination */}
-              {pagination.pages > 1 && (
-                <PaginationControls
-                  currentPage={pagination.page}
-                  totalPages={pagination.pages}
-                  onPageChange={handlePageChange}
-                />
-              )}
-            </>
+                    
+                    {/* Part info */}
+                    <div className="text-center">
+                      <h3 className="font-semibold text-gray-900 text-sm mb-1 line-clamp-1">
+                        {part.name}
+                      </h3>
+                      <p className="text-xs text-gray-500 mb-1">
+                        SKU: {part.sku || 'N/A'}
+                      </p>
+                      <p className="text-sm font-semibold text-blue-600">
+                        ${part.price?.toFixed(2) || '0.00'}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           )}
         </div>
 
+        {/* Pagination */}
+        {pagination.pages > 1 && (
+          <div className="border-t border-gray-200 px-6 py-4">
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-gray-700">
+                Showing {parts.length} of {pagination.total} parts
+              </span>
+              <div className="flex gap-2">
+                <Button
+                  text="Previous"
+                  variant="outlined"
+                  onClick={() => handlePageChange(pagination.page - 1)}
+                  disabled={pagination.page <= 1 || loading}
+                  fullWidth={false}
+                />
+                <span className="px-3 py-2 text-sm text-gray-600">
+                  {pagination.page} of {pagination.pages}
+                </span>
+                <Button
+                  text="Next"
+                  variant="outlined"
+                  onClick={() => handlePageChange(pagination.page + 1)}
+                  disabled={pagination.page >= pagination.pages || loading}
+                  fullWidth={false}
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Footer */}
-        <div className="flex items-center justify-end space-x-3 pt-4 border-t border-gray-200">
+        <div className="border-t border-gray-200 px-6 py-4 flex justify-end gap-3">
           <Button
+            text="Cancel"
+            variant="outlined"
             onClick={handleCancel}
-            variant="outline"
-          >
-            Cancel
-          </Button>
+            fullWidth={false}
+          />
           <Button
+            text={`Confirm Selection (${tempSelectedParts.length})`}
             onClick={handleConfirm}
             disabled={loading}
-          >
-            Confirm Selection ({tempSelectedParts.length})
-          </Button>
+            fullWidth={false}
+          />
         </div>
       </div>
     </div>
