@@ -10,6 +10,7 @@ import {
   Bars3Icon,
   ChevronLeftIcon,
 } from "@heroicons/react/24/solid";
+import { WrenchScrewdriverIcon } from "@heroicons/react/24/outline";
 
 const menuItems = [
   {
@@ -36,6 +37,11 @@ const menuItems = [
     text: "Vehicles",
     icon: <TruckIcon className="w-6 h-6" />,
     path: "/vehicles",
+  },
+  {
+    text: "Services",
+    icon: <WrenchScrewdriverIcon className="w-6 h-6" />,
+    path: "/services",
   },
 ];
 

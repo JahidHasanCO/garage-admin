@@ -75,3 +75,36 @@ export const validatePartForm = (formData) => {
     errors
   };
 };
+
+// Service-specific validation schema
+export const validateServiceForm = (formData) => {
+  const errors = {};
+  
+  // Validate name
+  const nameError = validateRequired(formData.name, "Service name");
+  if (nameError) errors.name = nameError;
+  else if (formData.name.length > 100) {
+    errors.name = "Service name cannot exceed 100 characters";
+  }
+  
+  // Validate price
+  const priceError = validateNumber(formData.price, "Price", 0);
+  if (priceError) errors.price = priceError;
+  
+  // Validate estimated_time
+  const timeError = validateNumber(formData.estimated_time, "Estimated time", 0);
+  if (timeError) errors.estimated_time = timeError;
+  
+  // Validate discount (optional)
+  if (formData.discount && formData.discount !== '') {
+    const discountError = validateNumber(formData.discount, "Discount", 0, 100);
+    if (discountError) errors.discount = discountError;
+  }
+  
+  // Validate description
+  if (formData.description && formData.description.length > 1000) {
+    errors.description = "Description cannot exceed 1000 characters";
+  }
+  
+  return errors;
+};

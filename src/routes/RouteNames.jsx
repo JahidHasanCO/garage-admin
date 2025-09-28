@@ -1,16 +1,22 @@
-export const RouteNames = {
+ const ROUTE_NAMES = {
     LOGIN: "/",
     DASHBOARD: "/dashboard",
     PARTS: "/parts",
-    ADD_PART: "/parts/add",
-    EDIT_PART: "/parts/edit/:id",
+    PARTS_ADD: "/parts/add",
+    PARTS_EDIT: "/parts/edit/:id",
     FUEL_TYPES: "/fuel-types",
-    ADD_FUEL_TYPE: "/fuel-types/add",
-    EDIT_FUEL_TYPE: "/fuel-types/edit/:id",
+    FUEL_TYPES_ADD: "/fuel-types/add",
+    FUEL_TYPES_EDIT: "/fuel-types/edit/:id",
     MANUFACTURERS: "/manufacturers",
-    ADD_MANUFACTURER: "/manufacturers/add",
-    EDIT_MANUFACTURER: "/manufacturers/edit/:id",
+    MANUFACTURERS_ADD: "/manufacturers/add",
+    MANUFACTURERS_EDIT: "/manufacturers/edit/:id",
     VEHICLES: "/vehicles",
-    ADD_VEHICLE: "/vehicles/add",
-    EDIT_VEHICLE: "/vehicles/edit/:id",
+    VEHICLES_ADD: "/vehicles/add",
+    VEHICLES_EDIT: "/vehicles/edit/:id",
+    SERVICES: "/services",
+    SERVICES_ADD: "/services/add",
+    SERVICES_EDIT: "/services/edit/:id",
 };
+
+// Legacy export for backward compatibility
+export const RouteNames = ROUTE_NAMES;
