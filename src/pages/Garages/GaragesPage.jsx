@@ -1,30 +1,46 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useGaragesData } from "../../hooks/useGaragesData";
 import PageHeader from "../../components/PageHeader";
 import DeleteConfirmDialog from "../../components/DeleteConfirmDialog";
 import GaragesTable from "./GaragesTable";
 import PaginationControls from "../../components/PaginationControls";
-import { useGaragesData } from "../../hooks/useGaragesData";
-import { useNavigate } from "react-router-dom";
-import AlertMessage from "../../components/AlertMessage";
 
 const GaragesPage = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+
     const {
         garages,
         loading,
         error,
         pagination,
-        deleteConfirmGarage,
         searchQuery,
-        alert,
+        deleteLoading,
         handleSearch,
         handlePageChange,
         handleLimitChange,
-        handleDeleteConfirm,
-        handleDeleteCancel,
-        handleDeleteGarage,
-        clearAlert
+        deleteGarageById,
+        refreshGarages
     } = useGaragesData();
+
+    const [deleteDialog, setDeleteDialog] = useState({ open: false, garage: null });
+    const [snackbar, setSnackbar] = useState({
+        open: false,
+        message: "",
+        severity: "success",
+    });
+
+    useEffect(() => {
+        if (location.state?.message && !location.state.cleared) {
+            setSnackbar({
+                open: true,
+                message: location.state.message,
+                severity: location.state.severity || "success",
+            });
+            navigate(location.pathname, { replace: true, state: { cleared: true } });
+        }
+    }, [location, navigate]);
 
     const handleEdit = (garageId) => {
         navigate(`/garages/edit/${garageId}`);
@@ -34,10 +50,60 @@ const GaragesPage = () => {
         navigate('/garages/add');
     };
 
-    return (
-        <div className="flex flex-col h-full">
-    
+    const handleDeleteClick = (garage) => {
+        setDeleteDialog({ open: true, garage });
+    };
 
+    const handleDeleteConfirm = async () => {
+        if (deleteDialog.garage) {
+            const result = await deleteGarageById(deleteDialog.garage._id);
+
+            if (result.success) {
+                setSnackbar({
+                    open: true,
+                    message: "Garage deleted successfully",
+                    severity: "success",
+                });
+            } else {
+                setSnackbar({
+                    open: true,
+                    message: result.error || "Failed to delete garage",
+                    severity: "error",
+                });
+            }
+        }
+        setDeleteDialog({ open: false, garage: null });
+    };
+
+    const handleDeleteCancel = () => {
+        setDeleteDialog({ open: false, garage: null });
+    };
+
+    const handleSnackbarClose = () => {
+        setSnackbar({ ...snackbar, open: false });
+    };
+
+    if (error) {
+        return (
+            <div className="w-full h-full flex flex-col">
+                <div className="p-4">
+                    <div className="mb-2 p-3 border border-red-300 rounded bg-red-50 text-red-700 flex justify-between items-center">
+                        <span>{error}</span>
+                        <button
+                            onClick={refreshGarages}
+                            className="ml-4 px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700"
+                        >
+                            Retry
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="w-full h-full flex flex-col bg-gray-50">
+            {/* Header */}
             <div className="p-4 pb-0 flex-shrink-0">
                 <PageHeader
                     title="Garage Management"
@@ -48,57 +114,63 @@ const GaragesPage = () => {
                 />
             </div>
 
-            {alert && (
-                <div className="px-4 pb-2">
-                    <AlertMessage
-                        type={alert.type}
-                        message={alert.message}
-                        onDismiss={clearAlert}
-                    />
-                </div>
-            )}
-
-            {error && (
-                <div className="px-4 pb-2">
-                    <AlertMessage
-                        type="error"
-                        message={error}
-                    />
-                </div>
-            )}
-
-            <div className="flex-1">
+            {/* Garages Table */}
+            <div className="flex-1 flex flex-col overflow-hidden">
                 <GaragesTable
                     garages={garages}
                     loading={loading}
                     searchQuery={searchQuery}
+                    deleteLoading={deleteLoading}
                     onEdit={handleEdit}
-                    onDelete={handleDeleteGarage}
+                    onDelete={handleDeleteClick}
                     onAddGarage={handleAdd}
                     onSearch={handleSearch}
                 />
             </div>
 
-            <div className="flex-shrink-0 px-4 pb-4">
+            {/* Pagination */}
+            <div className="px-4 py-3 flex-shrink-0 border-t border-gray-200 bg-white">
                 <PaginationControls
-                    currentPage={pagination.currentPage}
-                    totalPages={pagination.totalPages}
-                    totalItems={pagination.totalItems}
-                    itemsPerPage={pagination.itemsPerPage}
+                    page={pagination.page}
+                    pages={pagination.pages}
+                    total={pagination.total}
+                    limit={pagination.limit}
                     onPageChange={handlePageChange}
                     onLimitChange={handleLimitChange}
+                    disabled={loading}
                 />
             </div>
 
-            {deleteConfirmGarage && (
-                <DeleteConfirmDialog
-                    isOpen={true}
-                    title="Delete Garage"
-                    message={`Are you sure you want to delete "${deleteConfirmGarage.name}"? This action cannot be undone.`}
-                    onConfirm={handleDeleteConfirm}
-                    onCancel={handleDeleteCancel}
-                    loading={loading}
-                />
+            {/* Delete Dialog */}
+            <DeleteConfirmDialog
+                open={deleteDialog.open}
+                title="Delete Garage"
+                itemName={deleteDialog.garage?.name}
+                onConfirm={handleDeleteConfirm}
+                onCancel={handleDeleteCancel}
+            />
+
+            {/* Snackbar */}
+            {snackbar.open && (
+                <div className="fixed bottom-5 right-5 z-50">
+                    <div
+                        className={`px-4 py-2 rounded shadow-lg text-white ${
+                            snackbar.severity === "success"
+                                ? "bg-green-600"
+                                : "bg-red-600"
+                        }`}
+                    >
+                        <div className="flex items-center justify-between space-x-4">
+                            <span>{snackbar.message}</span>
+                            <button
+                                onClick={handleSnackbarClose}
+                                className="text-white font-bold"
+                            >
+                                ✕
+                            </button>
+                        </div>
+                    </div>
+                </div>
             )}
         </div>
     );

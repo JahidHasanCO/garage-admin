@@ -7,9 +7,11 @@ const GaragesTable = ({
   garages,
   loading,
   searchQuery,
+  deleteLoading,
   onEdit,
   onDelete,
   onAddGarage,
+  onSearch,
 }) => {
   const formatDate = (dateString) =>
     new Date(dateString).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
@@ -43,6 +45,11 @@ const GaragesTable = ({
             )}
           </div>
           <div className="flex items-center gap-3">
+            <SearchBar
+              placeholder="Search garages..."
+              value={searchQuery}
+              onChange={onSearch}
+            />
             <Button
               text="Add Garage"
               variant="outlined"
@@ -172,10 +179,18 @@ const GaragesTable = ({
                         </button>
                         <button
                           onClick={() => onDelete(garage)}
-                          className="text-red-500 hover:text-red-600 transition-colors"
+                          className={`${deleteLoading === garage._id
+                            ? "text-gray-400 cursor-not-allowed"
+                            : "text-red-500 hover:text-red-600"
+                            } transition-colors`}
+                          disabled={deleteLoading === garage._id}
                           title="Delete"
                         >
-                          <TrashIcon className="w-5 h-5" />
+                          {deleteLoading === garage._id ? (
+                            <div className="w-5 h-5 border-2 border-red-500 border-t-transparent rounded-full animate-spin" />
+                          ) : (
+                            <TrashIcon className="w-5 h-5" />
+                          )}
                         </button>
                       </div>
                     </td>

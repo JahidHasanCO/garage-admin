@@ -5,10 +5,11 @@ export const useGaragesData = () => {
   const [garages, setGarages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(null);
   const [pagination, setPagination] = useState({
-    total: 0,
     page: 1,
     pages: 1,
+    total: 0,
     limit: 10
   });
   const [searchQuery, setSearchQuery] = useState('');
@@ -35,9 +36,9 @@ export const useGaragesData = () => {
       
       setGarages(response.garages || []);
       setPagination({
-        total: response.total || 0,
         page: response.page || 1,
         pages: response.pages || 1,
+        total: response.total || 0,
         limit: limit
       });
     } catch (err) {
@@ -45,9 +46,9 @@ export const useGaragesData = () => {
       setError(err.response?.data?.message || 'Failed to fetch garages');
       setGarages([]);
       setPagination({
-        total: 0,
         page: 1,
         pages: 1,
+        total: 0,
         limit: limit
       });
     } finally {
@@ -65,26 +66,34 @@ export const useGaragesData = () => {
     fetchGarages(newPage, pagination.limit, debouncedSearchQuery);
   };
 
+  // Handle limit change
+  const handleLimitChange = (newLimit) => {
+    fetchGarages(1, newLimit, debouncedSearchQuery);
+  };
+
   // Handle search
   const handleSearch = (query) => {
     setSearchQuery(query);
   };
 
-  // Handle delete garage
-  const handleDelete = async (garageId) => {
+  // Delete garage
+  const deleteGarageById = async (garageId) => {
     try {
-      setError(null);
+      setDeleteLoading(garageId);
+      
       await deleteGarage(garageId);
       
-      // Refresh the current page
+      // Refresh the list after successful delete
       await fetchGarages(pagination.page, pagination.limit, debouncedSearchQuery);
       
       return { success: true };
-    } catch (err) {
-      console.error('Error deleting garage:', err);
-      const errorMessage = err.response?.data?.message || 'Failed to delete garage';
-      setError(errorMessage);
-      return { success: false, error: errorMessage };
+    } catch (error) {
+      return { 
+        success: false, 
+        error: error.response?.data?.message || "Failed to delete garage" 
+      };
+    } finally {
+      setDeleteLoading(null);
     }
   };
 
@@ -99,10 +108,13 @@ export const useGaragesData = () => {
     error,
     pagination,
     searchQuery,
+    deleteLoading,
     handlePageChange,
+    handleLimitChange,
     handleSearch,
-    handleDelete,
+    deleteGarageById,
     refreshGarages,
+    fetchGarages,
     setError
   };
 };

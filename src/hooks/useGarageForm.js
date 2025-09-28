@@ -89,6 +89,29 @@ export const useGarageForm = (garageId = null) => {
 
     // Clear field error when user starts typing
     if (errors[name]) {
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
+    }
+    
+    // Also clear general error when user starts fixing issues
+    if (error && error.includes('validation errors')) {
+      setError(null);
+    }
+  };
+
+  // Handle field blur validation
+  const handleFieldBlur = (name) => {
+    const fieldErrors = validateGarageForm(formData);
+    if (fieldErrors[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: fieldErrors[name]
+      }));
+    } else {
+      // Clear the error if field is now valid
       setErrors(prev => ({
         ...prev,
         [name]: null
@@ -132,6 +155,14 @@ export const useGarageForm = (garageId = null) => {
   const validateForm = () => {
     const validationErrors = validateGarageForm(formData);
     setErrors(validationErrors);
+    
+    // Set a general error if there are validation errors
+    if (Object.keys(validationErrors).length > 0) {
+      setError('Please fix the validation errors below');
+    } else {
+      setError(null);
+    }
+    
     return Object.keys(validationErrors).length === 0;
   };
 
@@ -221,6 +252,7 @@ export const useGarageForm = (garageId = null) => {
     alert,
     isEditing,
     handleInputChange,
+    handleFieldBlur,
     handleManufacturersChange,
     handleFuelTypesChange,
     handleSubmit,

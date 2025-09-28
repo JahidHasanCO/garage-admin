@@ -31,10 +31,12 @@ const AddEditGaragePage = () => {
 
     const {
         formData,
+        errors,
         loading,
         error,
         alert,
         handleInputChange,
+        handleFieldBlur,
         handleSubmit,
         clearAlert
     } = useGarageForm(id);
@@ -180,7 +182,9 @@ const AddEditGaragePage = () => {
                                 name="name"
                                 value={formData.name || ""}
                                 onChange={(e) => handleInputChange("name", e.target.value)}
+                                onBlur={() => handleFieldBlur("name")}
                                 placeholder="Enter garage name"
+                                error={errors?.name}
                                 required
                             />
 
@@ -189,7 +193,9 @@ const AddEditGaragePage = () => {
                                 name="address"
                                 value={formData.address || ""}
                                 onChange={(e) => handleInputChange("address", e.target.value)}
+                                onBlur={() => handleFieldBlur("address")}
                                 placeholder="Enter garage address"
+                                error={errors?.address}
                                 multiline
                                 rows={3}
                                 required
@@ -202,6 +208,7 @@ const AddEditGaragePage = () => {
                                     value={formData.city || ""}
                                     onChange={(e) => handleInputChange("city", e.target.value)}
                                     placeholder="Enter city"
+                                    error={errors?.city}
                                     required
                                 />
 
@@ -211,6 +218,7 @@ const AddEditGaragePage = () => {
                                     value={formData.country || ""}
                                     onChange={(e) => handleInputChange("country", e.target.value)}
                                     placeholder="Enter country"
+                                    error={errors?.country}
                                     required
                                 />
                             </div>
@@ -226,6 +234,7 @@ const AddEditGaragePage = () => {
                                         value={formData.geo?.lat || ""}
                                         onChange={(e) => handleInputChange("geo.lat", parseFloat(e.target.value) || "")}
                                         placeholder="e.g., 23.8103"
+                                        error={errors?.['geo.lat']}
                                     />
 
                                     <FormField
@@ -236,6 +245,7 @@ const AddEditGaragePage = () => {
                                         value={formData.geo?.lng || ""}
                                         onChange={(e) => handleInputChange("geo.lng", parseFloat(e.target.value) || "")}
                                         placeholder="e.g., 90.4125"
+                                        error={errors?.['geo.lng']}
                                     />
                                 </div>
                             </div>
@@ -249,6 +259,7 @@ const AddEditGaragePage = () => {
                                         value={formData.contact?.phone || ""}
                                         onChange={(e) => handleInputChange("contact.phone", e.target.value)}
                                         placeholder="Enter phone number"
+                                        error={errors?.['contact.phone']}
                                     />
 
                                     <FormField
@@ -257,7 +268,9 @@ const AddEditGaragePage = () => {
                                         type="email"
                                         value={formData.contact?.email || ""}
                                         onChange={(e) => handleInputChange("contact.email", e.target.value)}
+                                        onBlur={() => handleFieldBlur("contact.email")}
                                         placeholder="Enter email address"
+                                        error={errors?.['contact.email']}
                                     />
                                 </div>
                             </div>
