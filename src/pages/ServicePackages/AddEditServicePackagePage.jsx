@@ -66,7 +66,7 @@ const AddEditServicePackagePage = () => {
                     manufacturersService.getAllManufacturers(1, 1000),
                     fuelTypesService.getAllFuelTypes(1, 1000)
                 ]);
-                
+
                 setServices(servicesResponse.services || servicesResponse.data || []);
                 setGarages(garagesResponse.garages || garagesResponse.data || []);
                 setManufacturers(manufacturersResponse.data || []);
@@ -277,24 +277,6 @@ const AddEditServicePackagePage = () => {
                         {/* Right Column - Image Upload and Selections */}
                         <div className="lg:col-span-1">
                             <div className="space-y-8">
-                                {/* Package Image Upload */}
-                                <div>
-                                    <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                                        Package Image
-                                    </h2>
-                                    <FileUpload
-                                        label="Upload Image"
-                                        value={imagePreview}
-                                        onChange={handleImageChange}
-                                        error={errors?.image}
-                                        helperText="Upload an image of the service package (optional)"
-                                        accept="image/*"
-                                        maxSize={5 * 1024 * 1024} // 5MB
-                                    />
-                                </div>
-
-                                <hr className="border-gray-200" />
-
                                 <h2 className="text-lg font-semibold text-gray-900 mb-6">
                                     Package Configuration
                                 </h2>
