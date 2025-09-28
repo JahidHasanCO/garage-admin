@@ -6,6 +6,7 @@ import {
   CubeIcon,
   FireIcon,
   BuildingOffice2Icon,
+  TruckIcon,
   Bars3Icon,
   ChevronLeftIcon,
 } from "@heroicons/react/24/solid";
@@ -30,6 +31,11 @@ const menuItems = [
     text: "Manufacturers",
     icon: <BuildingOffice2Icon className="w-6 h-6" />,
     path: "/manufacturers",
+  },
+  {
+    text: "Vehicles",
+    icon: <TruckIcon className="w-6 h-6" />,
+    path: "/vehicles",
   },
 ];
 

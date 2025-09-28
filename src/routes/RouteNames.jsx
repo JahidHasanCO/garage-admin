@@ -10,4 +10,7 @@ export const RouteNames = {
     MANUFACTURERS: "/manufacturers",
     ADD_MANUFACTURER: "/manufacturers/add",
     EDIT_MANUFACTURER: "/manufacturers/edit/:id",
+    VEHICLES: "/vehicles",
+    ADD_VEHICLE: "/vehicles/add",
+    EDIT_VEHICLE: "/vehicles/edit/:id",
 };
