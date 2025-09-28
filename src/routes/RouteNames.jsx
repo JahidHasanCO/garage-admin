@@ -16,6 +16,9 @@
     SERVICES: "/services",
     SERVICES_ADD: "/services/add",
     SERVICES_EDIT: "/services/edit/:id",
+    GARAGES: "/garages",
+    GARAGES_ADD: "/garages/add",
+    GARAGES_EDIT: "/garages/edit/:id",
 };
 
 // Legacy export for backward compatibility

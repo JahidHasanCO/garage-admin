@@ -108,3 +108,90 @@ export const validateServiceForm = (formData) => {
   
   return errors;
 };
+
+// Email validation helper
+export const validateEmail = (email) => {
+  if (!email || email.trim() === '') {
+    return null; // Email is optional
+  }
+  
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailPattern.test(email.trim())) {
+    return 'Please enter a valid email address';
+  }
+  
+  return null;
+};
+
+// Phone validation helper
+export const validatePhone = (phone) => {
+  if (!phone || phone.trim() === '') {
+    return null; // Phone is optional
+  }
+  
+  const phonePattern = /^[+]?[\d\s-()]+$/;
+  if (!phonePattern.test(phone.trim())) {
+    return 'Please enter a valid phone number';
+  }
+  
+  if (phone.trim().length < 10) {
+    return 'Phone number must be at least 10 characters long';
+  }
+  
+  return null;
+};
+
+// Garage-specific validation schema
+export const validateGarageForm = (formData) => {
+  const errors = {};
+  
+  // Validate name
+  const nameError = validateRequired(formData.name, "Garage name");
+  if (nameError) errors.name = nameError;
+  else if (formData.name.length > 100) {
+    errors.name = "Garage name cannot exceed 100 characters";
+  }
+  
+  // Validate address
+  const addressError = validateRequired(formData.address, "Address");
+  if (addressError) errors.address = addressError;
+  else if (formData.address.length > 200) {
+    errors.address = "Address cannot exceed 200 characters";
+  }
+  
+  // Validate city
+  const cityError = validateRequired(formData.city, "City");
+  if (cityError) errors.city = cityError;
+  else if (formData.city.length > 50) {
+    errors.city = "City cannot exceed 50 characters";
+  }
+  
+  // Validate country
+  if (formData.country && formData.country.length > 50) {
+    errors.country = "Country cannot exceed 50 characters";
+  }
+  
+  // Validate geo coordinates (optional)
+  if (formData.geo?.lat && formData.geo.lat !== '') {
+    const latError = validateNumber(formData.geo.lat, "Latitude", -90, 90);
+    if (latError) errors['geo.lat'] = latError;
+  }
+  
+  if (formData.geo?.lng && formData.geo.lng !== '') {
+    const lngError = validateNumber(formData.geo.lng, "Longitude", -180, 180);
+    if (lngError) errors['geo.lng'] = lngError;
+  }
+  
+  // Validate contact information (optional)
+  if (formData.contact?.email) {
+    const emailError = validateEmail(formData.contact.email);
+    if (emailError) errors['contact.email'] = emailError;
+  }
+  
+  if (formData.contact?.phone) {
+    const phoneError = validatePhone(formData.contact.phone);
+    if (phoneError) errors['contact.phone'] = phoneError;
+  }
+  
+  return errors;
+};
