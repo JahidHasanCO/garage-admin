@@ -26,7 +26,7 @@ export default function Button({
       contained:
         "bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500 disabled:bg-gray-300 disabled:text-gray-500",
       outlined:
-        "border-2 border-primary-600 text-primary-600 bg-transparent hover:bg-primary-600 hover:text-white focus:ring-primary-500 disabled:border-gray-300 disabled:text-gray-300",
+        "border-1 border-primary-600 text-primary-600 bg-transparent hover:bg-primary-600 hover:text-white focus:ring-primary-500 disabled:border-gray-300 disabled:text-gray-300",
       text:
         "text-primary-600 bg-transparent hover:bg-blue-50 focus:ring-primary-500 disabled:text-gray-300",
     },

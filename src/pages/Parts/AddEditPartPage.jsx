@@ -6,6 +6,7 @@ import Button from "../../components/Button";
 import AlertMessage from "../../components/AlertMessage";
 import { usePartForm } from "../../hooks/usePartForm";
 import { partsService } from "../../api/partsService";
+import PageHeader from "../../components/PageHeader";
 
 export default function AddEditPartPage() {
   const { id } = useParams();
@@ -33,11 +34,11 @@ export default function AddEditPartPage() {
       try {
         setInitialLoading(true);
         await partsService.getPartById(id);
-        
+
         // The usePartForm hook will handle setting the form data
         // We need to pass it through the hook's initialization
         window.location.reload(); // Temporary solution - in production, you'd handle this better
-        
+
       } catch (error) {
         setLoadError(error.message);
       } finally {
@@ -103,57 +104,17 @@ export default function AddEditPartPage() {
   }
 
   return (
-    <div className="p-6 w-full max-w-none">
-      {/* Breadcrumbs */}
-      <nav className="mb-4">
-        <ol className="flex items-center space-x-2 text-sm text-gray-500">
-          <li>
-            <button
-              onClick={() => navigate("/dashboard")}
-              className="hover:text-primaryDeep transition-colors"
-            >
-              Dashboard
-            </button>
-          </li>
-          <li>
-            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-            </svg>
-          </li>
-          <li>
-            <button
-              onClick={() => navigate("/parts")}
-              className="hover:text-primaryDeep transition-colors"
-            >
-              Parts
-            </button>
-          </li>
-          <li>
-            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-            </svg>
-          </li>
-          <li className="text-gray-900">
-            {isEditMode ? "Edit Part" : "Add New Part"}
-          </li>
-        </ol>
-      </nav>
-
-      {/* Header */}
-      <div className="flex items-center mb-6">
-        <button
-          onClick={handleCancel}
-          className="mr-4 inline-flex items-center px-3 py-1.5 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
-        >
-          <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
-          </svg>
-          Back
-        </button>
-        <h1 className="text-2xl font-bold text-gray-900">
-          {isEditMode ? "Edit Part" : "Add New Part"}
-        </h1>
-      </div>
+    <div className="p-4 w-full max-w-none">
+      <PageHeader
+        title={isEditMode ? "Edit Part" : "Add New Part"}
+        breadcrumbs={[
+          { label: "Dashboard", path: "/dashboard" },
+          { label: "Parts", path: "/parts" },
+          { label: isEditMode ? "Edit Part" : "Add New Part" }
+        ]}
+        showBackButton
+        onBack={handleCancel}
+      />
 
       {/* Error Alert */}
       {submitError && <AlertMessage type="error" message={submitError} />}

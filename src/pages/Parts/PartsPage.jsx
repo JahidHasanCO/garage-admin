@@ -1,23 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import {
-  Box,
-  Button,
-  Alert,
-  Snackbar,
-} from "@mui/material";
-import { Add as AddIcon } from "@mui/icons-material";
 import { usePartsData } from "../../hooks/usePartsData";
 import PaginationControls from "../../components/PaginationControls";
 import PageHeader from "../../components/PageHeader";
 import PartsTable from "./PartsTable";
 import DeleteConfirmDialog from "../../components/DeleteConfirmDialog";
 
-
 export default function PartsPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  // Use the custom hook for parts data
+
   const {
     parts,
     loading,
@@ -31,17 +23,13 @@ export default function PartsPage() {
     refresh,
   } = usePartsData();
 
-  // Local state for UI
-  const [deleteDialog, setDeleteDialog] = useState({
-    open: false,
-    part: null,
-  });
+  const [deleteDialog, setDeleteDialog] = useState({ open: false, part: null });
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
     severity: "success",
   });
-  // Check for success message from navigation state
+
   useEffect(() => {
     if (location.state?.message && !location.state.cleared) {
       setSnackbar({
@@ -49,25 +37,13 @@ export default function PartsPage() {
         message: location.state.message,
         severity: location.state.severity || "success",
       });
-      // Clear the state to prevent showing the message again
       navigate(location.pathname, { replace: true, state: { cleared: true } });
     }
   }, [location, navigate]);
 
-  const handleAddPart = () => {
-    navigate("/parts/add");
-  };
-
-  const handleEditPart = (partId) => {
-    navigate(`/parts/edit/${partId}`);
-  };
-
-  const handleDeleteClick = (part) => {
-    setDeleteDialog({
-      open: true,
-      part,
-    });
-  };
+  const handleAddPart = () => navigate("/parts/add");
+  const handleEditPart = (partId) => navigate(`/parts/edit/${partId}`);
+  const handleDeleteClick = (part) => setDeleteDialog({ open: true, part });
 
   const handleDeleteConfirm = async () => {
     if (deleteDialog.part) {
@@ -87,43 +63,34 @@ export default function PartsPage() {
         });
       }
     }
-
     setDeleteDialog({ open: false, part: null });
   };
 
-  const handleDeleteCancel = () => {
-    setDeleteDialog({ open: false, part: null });
-  };
-
-  const handleSnackbarClose = () => {
-    setSnackbar({ ...snackbar, open: false });
-  };
-
+  const handleDeleteCancel = () => setDeleteDialog({ open: false, part: null });
+  const handleSnackbarClose = () => setSnackbar({ ...snackbar, open: false });
 
   if (error) {
     return (
-      <Box sx={{ width: "100%", height: "100%", display: "flex", flexDirection: "column" }}>
-        <Box sx={{ p: 3 }}>
-          <Alert
-            severity="error"
-            sx={{ mb: 2 }}
-            action={
-              <Button color="inherit" size="small" onClick={refresh}>
-                Retry
-              </Button>
-            }
-          >
-            {error}
-          </Alert>
-        </Box>
-      </Box>
+      <div className="w-full h-full flex flex-col">
+        <div className="p-4">
+          <div className="mb-2 p-3 border border-red-300 rounded bg-red-50 text-red-700 flex justify-between items-center">
+            <span>{error}</span>
+            <button
+              onClick={refresh}
+              className="ml-4 px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700"
+            >
+              Retry
+            </button>
+          </div>
+        </div>
+      </div>
     );
   }
 
   return (
-    <Box sx={{ width: "100%", height: "100%", display: "flex", flexDirection: "column" }}>
+    <div className="w-full h-full flex flex-col bg-gray-50">
       {/* Header */}
-      <Box sx={{ p: 3, pb: 0, flexShrink: 0 }}>
+      <div className="p-4 pb-0 flex-shrink-0">
         <PageHeader
           title="Parts Management"
           breadcrumbs={[
@@ -131,10 +98,10 @@ export default function PartsPage() {
             { label: "Parts", path: "/parts" },
           ]}
         />
-      </Box>
+      </div>
 
       {/* Parts Table */}
-      <Box sx={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+      <div className="flex-1 flex flex-col overflow-hidden">
         <PartsTable
           parts={parts}
           loading={loading}
@@ -144,10 +111,10 @@ export default function PartsPage() {
           onDelete={handleDeleteClick}
           onAddPart={handleAddPart}
         />
-      </Box>
+      </div>
 
       {/* Pagination */}
-      <Box sx={{ px: 3, py: 2, flexShrink: 0, borderTop: "1px solid #e5e7eb", backgroundColor: "white" }}>
+      <div className="px-4 py-3 flex-shrink-0 border-t border-gray-200 bg-white">
         <PaginationControls
           page={pagination.page}
           pages={pagination.pages}
@@ -157,9 +124,9 @@ export default function PartsPage() {
           onLimitChange={handleLimitChange}
           disabled={loading}
         />
-      </Box>
+      </div>
 
-      {/* Delete Confirmation Dialog */}
+      {/* Delete Dialog */}
       <DeleteConfirmDialog
         open={deleteDialog.open}
         title="Delete Part"
@@ -168,21 +135,28 @@ export default function PartsPage() {
         onCancel={handleDeleteCancel}
       />
 
-      {/* Success/Error Snackbar */}
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={6000}
-        onClose={handleSnackbarClose}
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-      >
-        <Alert
-          onClose={handleSnackbarClose}
-          severity={snackbar.severity}
-          sx={{ width: "100%" }}
-        >
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
-    </Box>
+      {/* Snackbar */}
+      {snackbar.open && (
+        <div className="fixed bottom-5 right-5 z-50">
+          <div
+            className={`px-4 py-2 rounded shadow-lg text-white ${
+              snackbar.severity === "success"
+                ? "bg-green-600"
+                : "bg-red-600"
+            }`}
+          >
+            <div className="flex items-center justify-between space-x-4">
+              <span>{snackbar.message}</span>
+              <button
+                onClick={handleSnackbarClose}
+                className="text-white font-bold"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
