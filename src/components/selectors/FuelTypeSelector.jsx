@@ -109,42 +109,44 @@ const FuelTypeSelector = ({ isOpen, onClose, onSelect, selectedFuelType = null }
               {searchQuery ? 'No fuel types found matching your search' : 'No fuel types available'}
             </div>
           ) : (
-            <div className="grid gap-3">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {fuelTypes.map((fuelType) => (
                 <div
                   key={fuelType._id}
                   onClick={() => handleSelect(fuelType)}
-                  className={`flex items-center p-4 border rounded-lg cursor-pointer transition-colors hover:bg-gray-50 ${
+                  className={`relative flex flex-col items-center p-4 border-2 rounded-lg cursor-pointer transition-all duration-200 hover:shadow-md ${
                     selectedFuelType?._id === fuelType._id 
-                      ? 'border-blue-500 bg-blue-50' 
-                      : 'border-gray-200'
+                      ? 'border-blue-500 bg-blue-50 shadow-md' 
+                      : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >
+                  {/* Selection indicator */}
+                  {selectedFuelType?._id === fuelType._id && (
+                    <div className="absolute top-2 right-2 bg-blue-500 rounded-full p-1">
+                      <CheckIcon className="w-4 h-4 text-white" />
+                    </div>
+                  )}
+
                   {/* Image */}
-                  <div className="flex-shrink-0 w-12 h-12 mr-4">
+                  <div className="w-16 h-16 mb-3 flex items-center justify-center">
                     {fuelType.image ? (
                       <img
                         src={fuelType.image}
                         alt={`${fuelType.title} icon`}
-                        className="w-full h-full object-contain rounded"
+                        className="w-full h-full object-contain rounded-lg"
                       />
                     ) : (
-                      <div className="w-full h-full bg-gray-200 rounded flex items-center justify-center">
-                        <span className="text-gray-400 text-xs">{fuelType.title.charAt(0)}</span>
+                      <div className="w-full h-full bg-gray-200 rounded-lg flex items-center justify-center">
+                        <span className="text-gray-400 text-lg font-semibold">{fuelType.title.charAt(0)}</span>
                       </div>
                     )}
                   </div>
 
                   {/* Info */}
-                  <div className="flex-1">
-                    <h3 className="font-medium text-gray-900">{fuelType.title}</h3>
-                    <p className="text-sm text-gray-500">Value: {fuelType.value}</p>
+                  <div className="text-center">
+                    <h3 className="font-semibold text-gray-900 text-sm mb-1 line-clamp-1">{fuelType.title}</h3>
+                    <p className="text-xs text-gray-500">{fuelType.value}</p>
                   </div>
-
-                  {/* Selection indicator */}
-                  {selectedFuelType?._id === fuelType._id && (
-                    <CheckIcon className="w-5 h-5 text-blue-600 flex-shrink-0" />
-                  )}
                 </div>
               ))}
             </div>

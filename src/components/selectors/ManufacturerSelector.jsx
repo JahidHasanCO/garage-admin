@@ -109,45 +109,47 @@ const ManufacturerSelector = ({ isOpen, onClose, onSelect, selectedManufacturer 
               {searchQuery ? 'No manufacturers found matching your search' : 'No manufacturers available'}
             </div>
           ) : (
-            <div className="grid gap-3">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {manufacturers.map((manufacturer) => (
                 <div
                   key={manufacturer._id}
                   onClick={() => handleSelect(manufacturer)}
-                  className={`flex items-center p-4 border rounded-lg cursor-pointer transition-colors hover:bg-gray-50 ${
+                  className={`relative flex flex-col items-center p-4 border-2 rounded-lg cursor-pointer transition-all duration-200 hover:shadow-md ${
                     selectedManufacturer?._id === manufacturer._id 
-                      ? 'border-blue-500 bg-blue-50' 
-                      : 'border-gray-200'
+                      ? 'border-blue-500 bg-blue-50 shadow-md' 
+                      : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >
+                  {/* Selection indicator */}
+                  {selectedManufacturer?._id === manufacturer._id && (
+                    <div className="absolute top-2 right-2 bg-blue-500 rounded-full p-1">
+                      <CheckIcon className="w-4 h-4 text-white" />
+                    </div>
+                  )}
+
                   {/* Logo */}
-                  <div className="flex-shrink-0 w-12 h-12 mr-4">
+                  <div className="w-16 h-16 mb-3 flex items-center justify-center">
                     {manufacturer.logo ? (
                       <img
                         src={manufacturer.logo}
                         alt={`${manufacturer.name} logo`}
-                        className="w-full h-full object-contain rounded"
+                        className="w-full h-full object-contain rounded-lg"
                       />
                     ) : (
-                      <div className="w-full h-full bg-gray-200 rounded flex items-center justify-center">
-                        <span className="text-gray-400 text-xs">{manufacturer.name.charAt(0)}</span>
+                      <div className="w-full h-full bg-gray-200 rounded-lg flex items-center justify-center">
+                        <span className="text-gray-400 text-lg font-semibold">{manufacturer.name.charAt(0)}</span>
                       </div>
                     )}
                   </div>
 
                   {/* Info */}
-                  <div className="flex-1">
-                    <h3 className="font-medium text-gray-900">{manufacturer.name}</h3>
-                    <p className="text-sm text-gray-500">{manufacturer.country}</p>
+                  <div className="text-center">
+                    <h3 className="font-semibold text-gray-900 text-sm mb-1 line-clamp-1">{manufacturer.name}</h3>
+                    <p className="text-xs text-gray-500 mb-1">{manufacturer.country}</p>
                     {manufacturer.founded && (
-                      <p className="text-xs text-gray-400">Founded: {manufacturer.founded}</p>
+                      <p className="text-xs text-gray-400">Est. {manufacturer.founded}</p>
                     )}
                   </div>
-
-                  {/* Selection indicator */}
-                  {selectedManufacturer?._id === manufacturer._id && (
-                    <CheckIcon className="w-5 h-5 text-blue-600 flex-shrink-0" />
-                  )}
                 </div>
               ))}
             </div>
