@@ -1,3 +1,4 @@
+// Garage API service
 import axios from 'axios';
 import { API_URL } from '../constants/api';
 
@@ -16,17 +17,23 @@ garageAPI.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    console.log('Garage API request:', config.method?.toUpperCase(), config.url, config.data);
     return config;
   },
   (error) => {
+    console.error('Garage API request error:', error);
     return Promise.reject(error);
   }
 );
 
 // Response interceptor for error handling
 garageAPI.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    console.log('Garage API response:', response.status, response.data);
+    return response;
+  },
   (error) => {
+    console.error('Garage API response error:', error.response?.status, error.response?.data);
     if (error.response?.status === 401) {
       // Token expired or invalid
       localStorage.removeItem('token');
@@ -36,49 +43,6 @@ garageAPI.interceptors.response.use(
   }
 );
 
-
-// Helper function to prepare garage form data
-const prepareGarageFormData = (garageData) => {
-  const formData = new FormData();
-  
-  // Add basic garage fields
-  formData.append('name', garageData.name || '');
-  formData.append('address', garageData.address || '');
-  formData.append('city', garageData.city || '');
-  formData.append('country', garageData.country || 'Bangladesh');
-  
-  // Add geo coordinates
-  if (garageData.geo?.lat) {
-    formData.append('geo[lat]', garageData.geo.lat);
-  }
-  if (garageData.geo?.lng) {
-    formData.append('geo[lng]', garageData.geo.lng);
-  }
-  
-  // Add contact information
-  if (garageData.contact?.phone) {
-    formData.append('contact[phone]', garageData.contact.phone);
-  }
-  if (garageData.contact?.email) {
-    formData.append('contact[email]', garageData.contact.email);
-  }
-  
-  // Add supported manufacturers array
-  if (garageData.supportedManufacturers && Array.isArray(garageData.supportedManufacturers)) {
-    garageData.supportedManufacturers.forEach(manufacturerId => {
-      formData.append('supportedManufacturers[]', manufacturerId);
-    });
-  }
-  
-  // Add supported fuel types array
-  if (garageData.supportedFuelTypes && Array.isArray(garageData.supportedFuelTypes)) {
-    garageData.supportedFuelTypes.forEach(fuelTypeId => {
-      formData.append('supportedFuelTypes[]', fuelTypeId);
-    });
-  }
-  
-  return formData;
-};
 
 // Get all garages with pagination and search
 export const getAllGarages = async (page = 1, limit = 10, search = '') => {
@@ -114,14 +78,15 @@ export const getGarageById = async (id) => {
 // Create new garage
 export const createGarage = async (garageData) => {
   try {
-    const formData = prepareGarageFormData(garageData);
-
-    const response = await garageAPI.post('/', formData, {
+    console.log('Creating garage with data:', garageData);
+    
+    const response = await garageAPI.post('/', garageData, {
       headers: {
-        'Content-Type': 'multipart/form-data',
+        'Content-Type': 'application/json',
       },
     });
     
+    console.log('Create garage response:', response.data);
     return response.data;
   } catch (error) {
     console.error('Error creating garage:', error);
@@ -132,14 +97,15 @@ export const createGarage = async (garageData) => {
 // Update garage
 export const updateGarage = async (id, garageData) => {
   try {
-    const formData = prepareGarageFormData(garageData);
-
-    const response = await garageAPI.put(`/${id}`, formData, {
+    console.log('Updating garage with data:', garageData);
+    
+    const response = await garageAPI.put(`/${id}`, garageData, {
       headers: {
-        'Content-Type': 'multipart/form-data',
+        'Content-Type': 'application/json',
       },
     });
     
+    console.log('Update garage response:', response.data);
     return response.data;
   } catch (error) {
     console.error('Error updating garage:', error);

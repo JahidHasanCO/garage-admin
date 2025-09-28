@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { createGarage, updateGarage, getGarageById } from '../api/garagesService';
 import { validateGarageForm } from '../utils/validation';
 
-export const useGarageForm = (initialData = null, garageId = null) => {
+export const useGarageForm = (garageId = null) => {
   const [formData, setFormData] = useState({
     name: '',
     address: '',
@@ -22,35 +22,14 @@ export const useGarageForm = (initialData = null, garageId = null) => {
   
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const [submitError, setSubmitError] = useState(null);
+  const [error, setError] = useState(null); // Add general error state
+  const [alert, setAlert] = useState(null); // Add alert state
   const [isEditing] = useState(!!garageId);
 
   // Initialize form data
   useEffect(() => {
     const initializeForm = async () => {
-      if (initialData) {
-        // Use provided initial data
-        setFormData({
-          name: initialData.name || '',
-          address: initialData.address || '',
-          city: initialData.city || '',
-          country: initialData.country || 'Bangladesh',
-          geo: {
-            lat: initialData.geo?.lat?.toString() || '',
-            lng: initialData.geo?.lng?.toString() || ''
-          },
-          contact: {
-            phone: initialData.contact?.phone || '',
-            email: initialData.contact?.email || ''
-          },
-          supportedManufacturers: initialData.supportedManufacturers?.map(manufacturer => 
-            typeof manufacturer === 'object' ? manufacturer._id : manufacturer
-          ) || [],
-          supportedFuelTypes: initialData.supportedFuelTypes?.map(fuelType => 
-            typeof fuelType === 'object' ? fuelType._id : fuelType
-          ) || []
-        });
-      } else if (garageId) {
+      if (garageId) {
         // Fetch garage data for editing
         try {
           setLoading(true);
@@ -79,7 +58,7 @@ export const useGarageForm = (initialData = null, garageId = null) => {
           });
         } catch (err) {
           console.error('Error fetching garage:', err);
-          setSubmitError('Failed to load garage data');
+          setError('Failed to load garage data');
         } finally {
           setLoading(false);
         }
@@ -87,7 +66,7 @@ export const useGarageForm = (initialData = null, garageId = null) => {
     };
 
     initializeForm();
-  }, [garageId, initialData]);
+  }, [garageId]);
 
   // Handle input changes
   const handleInputChange = (name, value) => {
@@ -159,12 +138,12 @@ export const useGarageForm = (initialData = null, garageId = null) => {
   // Handle form submission
   const handleSubmit = async () => {
     if (!validateForm()) {
-      return { success: false, errors };
+      return false;
     }
 
     try {
       setLoading(true);
-      setSubmitError(null);
+      setError(null);
 
       // Prepare form data for submission
       const submitData = {
@@ -184,26 +163,31 @@ export const useGarageForm = (initialData = null, garageId = null) => {
         supportedFuelTypes: formData.supportedFuelTypes
       };
 
-      let response;
       if (isEditing) {
-        response = await updateGarage(garageId, submitData);
+        await updateGarage(garageId, submitData);
       } else {
-        response = await createGarage(submitData);
+        await createGarage(submitData);
       }
 
-      return { 
-        success: true, 
-        data: response.garage || response,
+      setAlert({
+        type: 'success',
         message: isEditing ? 'Garage updated successfully' : 'Garage created successfully'
-      };
+      });
+
+      return true;
     } catch (err) {
       console.error('Error submitting garage form:', err);
       const errorMessage = err.response?.data?.message || `Failed to ${isEditing ? 'update' : 'create'} garage`;
-      setSubmitError(errorMessage);
-      return { success: false, error: errorMessage };
+      setError(errorMessage);
+      return false;
     } finally {
       setLoading(false);
     }
+  };
+
+  // Clear alert
+  const clearAlert = () => {
+    setAlert(null);
   };
 
   // Reset form
@@ -225,20 +209,22 @@ export const useGarageForm = (initialData = null, garageId = null) => {
       supportedFuelTypes: []
     });
     setErrors({});
-    setSubmitError(null);
+    setError(null);
+    setAlert(null);
   };
 
   return {
     formData,
     errors,
     loading,
-    submitError,
+    error,
+    alert,
     isEditing,
     handleInputChange,
     handleManufacturersChange,
     handleFuelTypesChange,
     handleSubmit,
     resetForm,
-    setSubmitError
+    clearAlert
   };
 };
