@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useParams, Link } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import PageHeader from "../../components/PageHeader";
-import InputField from "../../components/InputField";
+import FormField from "../../components/forms/FormField";
 import Button from "../../components/Button";
 import AlertMessage from "../../components/AlertMessage";
+import ManufacturerMultiSelector from "../../components/selectors/ManufacturerMultiSelector";
+import FuelTypeMultiSelector from "../../components/selectors/FuelTypeMultiSelector";
 import { useGarageForm } from "../../hooks/useGarageForm";
 import { manufacturersService } from "../../api/manufacturersService";
 import { fuelTypesService } from "../../api/fuelTypesService";
-import { ChevronRightIcon, HomeIcon } from "@heroicons/react/24/outline";
+import { BuildingOffice2Icon, FireIcon, PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
 const AddEditGaragePage = () => {
   const navigate = useNavigate();
@@ -16,7 +18,16 @@ const AddEditGaragePage = () => {
   
   const [manufacturers, setManufacturers] = useState([]);
   const [fuelTypes, setFuelTypes] = useState([]);
-  const [loadingData, setLoadingData] = useState(true);
+  const [initialLoading, setInitialLoading] = useState(true);
+  const [loadError, setLoadError] = useState(null);
+  
+  // Modal states
+  const [manufacturerSelectorOpen, setManufacturerSelectorOpen] = useState(false);
+  const [fuelTypeSelectorOpen, setFuelTypeSelectorOpen] = useState(false);
+  
+  // Selected items details for display
+  const [selectedManufacturersDetails, setSelectedManufacturersDetails] = useState([]);
+  const [selectedFuelTypesDetails, setSelectedFuelTypesDetails] = useState([]);
 
   const {
     formData,
@@ -31,274 +42,437 @@ const AddEditGaragePage = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
+        setInitialLoading(true);
+        // Fetch all manufacturers and fuel types without pagination
         const [manufacturersResponse, fuelTypesResponse] = await Promise.all([
-          manufacturersService.getAllManufacturers(),
-          fuelTypesService.getAllFuelTypes()
+          manufacturersService.getAllManufacturers(1, 1000), // Get up to 1000 manufacturers
+          fuelTypesService.getAllFuelTypes(1, 1000) // Get up to 1000 fuel types
         ]);
         setManufacturers(manufacturersResponse.data || []);
         setFuelTypes(fuelTypesResponse.data || []);
       } catch (err) {
         console.error('Error loading data:', err);
+        setLoadError(err.message);
       } finally {
-        setLoadingData(false);
+        setInitialLoading(false);
       }
     };
 
     loadData();
   }, []);
 
-  const onSubmit = async (e) => {
-    e.preventDefault();
+  // Update selected items details when selection changes
+  useEffect(() => {
+    const selectedManufacturerIds = formData.supportedManufacturers || [];
+    const selectedFuelTypeIds = formData.supportedFuelTypes || [];
+    
+    const selectedMfgDetails = manufacturers.filter(m => 
+      selectedManufacturerIds.includes(m._id)
+    );
+    const selectedFuelDetails = fuelTypes.filter(f => 
+      selectedFuelTypeIds.includes(f._id)
+    );
+    
+    setSelectedManufacturersDetails(selectedMfgDetails);
+    setSelectedFuelTypesDetails(selectedFuelDetails);
+  }, [formData.supportedManufacturers, formData.supportedFuelTypes, manufacturers, fuelTypes]);
+
+  const handleSave = async () => {
     const success = await handleSubmit();
     if (success) {
       navigate('/garages', { 
         state: { 
           message: `Garage ${isEditing ? 'updated' : 'created'} successfully!`,
-          type: 'success'
+          severity: 'success'
         }
       });
     }
   };
 
-  const handleManufacturerToggle = (manufacturerId) => {
+  const handleCancel = () => {
+    navigate('/garages');
+  };
+
+  // Handle manufacturer selection from modal
+  const handleManufacturerSelect = (selectedIds) => {
+    handleInputChange('supportedManufacturers', selectedIds);
+  };
+
+  // Handle fuel type selection from modal
+  const handleFuelTypeSelect = (selectedIds) => {
+    handleInputChange('supportedFuelTypes', selectedIds);
+  };
+
+  // Remove selected manufacturer
+  const handleRemoveManufacturer = (manufacturerId) => {
     const currentIds = formData.supportedManufacturers || [];
-    const newIds = currentIds.includes(manufacturerId)
-      ? currentIds.filter(id => id !== manufacturerId)
-      : [...currentIds, manufacturerId];
-    
+    const newIds = currentIds.filter(id => id !== manufacturerId);
     handleInputChange('supportedManufacturers', newIds);
   };
 
-  const handleFuelTypeToggle = (fuelTypeId) => {
+  // Remove selected fuel type
+  const handleRemoveFuelType = (fuelTypeId) => {
     const currentIds = formData.supportedFuelTypes || [];
-    const newIds = currentIds.includes(fuelTypeId)
-      ? currentIds.filter(id => id !== fuelTypeId)
-      : [...currentIds, fuelTypeId];
-    
+    const newIds = currentIds.filter(id => id !== fuelTypeId);
     handleInputChange('supportedFuelTypes', newIds);
   };
 
-  if (loadingData) {
+  if (initialLoading) {
     return (
-      <div className="flex flex-col h-full">
-        <PageHeader title={isEditing ? "Edit Garage" : "Add New Garage"} />
-        <div className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            <div className="loader mb-4"></div>
-            <p className="text-gray-600">Loading...</p>
-          </div>
-        </div>
+      <div className="flex justify-center items-center h-96">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primaryDeep"></div>
+        <span className="ml-4 text-lg font-medium">Loading garage data...</span>
+      </div>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <div className="p-6">
+        <AlertMessage type="error" message={loadError} />
+        <Button
+          text="Back to Garages"
+          variant="outlined"
+          onClick={handleCancel}
+          fullWidth={false}
+          className="mt-4"
+        />
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col h-full bg-gray-50">
-      <PageHeader title={isEditing ? "Edit Garage" : "Add New Garage"} />
+    <div className="p-4 w-full max-w-none">
+      <PageHeader
+        title={isEditing ? "Edit Garage" : "Add New Garage"}
+        breadcrumbs={[
+          { label: "Dashboard", path: "/dashboard" },
+          { label: "Garages", path: "/garages" },
+          { label: isEditing ? "Edit Garage" : "Add New Garage" }
+        ]}
+        showBackButton
+        onBack={handleCancel}
+      />
 
-      {/* Breadcrumb */}
-      <div className="px-4 pb-4">
-        <nav className="flex items-center text-sm text-gray-500">
-          <Link to="/dashboard" className="flex items-center hover:text-gray-700">
-            <HomeIcon className="w-4 h-4 mr-1" />
-            Dashboard
-          </Link>
-          <ChevronRightIcon className="w-4 h-4 mx-2" />
-          <Link to="/garages" className="hover:text-gray-700">
-            Garages
-          </Link>
-          <ChevronRightIcon className="w-4 h-4 mx-2" />
-          <span className="text-gray-900">
-            {isEditing ? "Edit Garage" : "Add New Garage"}
-          </span>
-        </nav>
-      </div>
-
+      {/* Error Alert */}
+      {error && <AlertMessage type="error" message={error} />}
+      
       {alert && (
-        <div className="px-4 pb-4">
-          <AlertMessage 
-            type={alert.type} 
-            message={alert.message} 
-            onDismiss={clearAlert}
-          />
-        </div>
+        <AlertMessage 
+          type={alert.type} 
+          message={alert.message} 
+          onDismiss={clearAlert}
+        />
       )}
 
-      {error && (
-        <div className="px-4 pb-4">
-          <AlertMessage 
-            type="error" 
-            message={error} 
-          />
-        </div>
-      )}
+      {/* Main Form Card */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 w-full">
+        <div className="p-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full">
+            {/* Left Column - Basic Information */}
+            <div className="lg:col-span-2 space-y-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-6">
+                Basic Information
+              </h2>
 
-      <div className="flex-1 px-4 pb-4 overflow-auto">
-        <div className="max-w-7xl mx-auto">
-          <form onSubmit={onSubmit}>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <FormField
+                label="Garage Name"
+                name="name"
+                value={formData.name || ""}
+                onChange={(e) => handleInputChange("name", e.target.value)}
+                placeholder="Enter garage name"
+                required
+              />
+
+              <FormField
+                label="Address"
+                name="address"
+                value={formData.address || ""}
+                onChange={(e) => handleInputChange("address", e.target.value)}
+                placeholder="Enter garage address"
+                multiline
+                rows={3}
+                required
+              />
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  label="City"
+                  name="city"
+                  value={formData.city || ""}
+                  onChange={(e) => handleInputChange("city", e.target.value)}
+                  placeholder="Enter city"
+                  required
+                />
+
+                <FormField
+                  label="Country"
+                  name="country"
+                  value={formData.country || ""}
+                  onChange={(e) => handleInputChange("country", e.target.value)}
+                  placeholder="Enter country"
+                  required
+                />
+              </div>
+
+              <div className="border-t pt-6">
+                <h3 className="text-md font-medium text-gray-900 mb-4">Geographic Coordinates</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    label="Latitude"
+                    name="geo.lat"
+                    type="number"
+                    step="any"
+                    value={formData.geo?.lat || ""}
+                    onChange={(e) => handleInputChange("geo.lat", parseFloat(e.target.value) || "")}
+                    placeholder="e.g., 23.8103"
+                  />
+
+                  <FormField
+                    label="Longitude"
+                    name="geo.lng"
+                    type="number"
+                    step="any"
+                    value={formData.geo?.lng || ""}
+                    onChange={(e) => handleInputChange("geo.lng", parseFloat(e.target.value) || "")}
+                    placeholder="e.g., 90.4125"
+                  />
+                </div>
+              </div>
+
+              <div className="border-t pt-6">
+                <h3 className="text-md font-medium text-gray-900 mb-4">Contact Information</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    label="Phone"
+                    name="contact.phone"
+                    value={formData.contact?.phone || ""}
+                    onChange={(e) => handleInputChange("contact.phone", e.target.value)}
+                    placeholder="Enter phone number"
+                  />
+
+                  <FormField
+                    label="Email"
+                    name="contact.email"
+                    type="email"
+                    value={formData.contact?.email || ""}
+                    onChange={(e) => handleInputChange("contact.email", e.target.value)}
+                    placeholder="Enter email address"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column - Supported Services */}
+            <div className="lg:col-span-1">
+              <h2 className="text-lg font-semibold text-gray-900 mb-6">
+                Supported Services
+              </h2>
               
-              {/* Left Column - Basic Information */}
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-6">Basic Information</h3>
-                
-                <div className="space-y-6">
-                  <InputField
-                    label="Garage Name"
-                    name="name"
-                    value={formData.name || ""}
-                    onChange={(e) => handleInputChange("name", e.target.value)}
-                    placeholder="Enter garage name"
-                    required
-                  />
-
-                  <InputField
-                    label="Address"
-                    name="address"
-                    value={formData.address || ""}
-                    onChange={(e) => handleInputChange("address", e.target.value)}
-                    placeholder="Enter garage address"
-                    multiline
-                    rows={3}
-                    required
-                  />
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <InputField
-                      label="City"
-                      name="city"
-                      value={formData.city || ""}
-                      onChange={(e) => handleInputChange("city", e.target.value)}
-                      placeholder="Enter city"
-                      required
-                    />
-
-                    <InputField
-                      label="Country"
-                      name="country"
-                      value={formData.country || ""}
-                      onChange={(e) => handleInputChange("country", e.target.value)}
-                      placeholder="Enter country"
-                      required
-                    />
-                  </div>
-
-                  <div className="border-t pt-6">
-                    <h4 className="text-md font-medium text-gray-900 mb-4">Geographic Coordinates</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <InputField
-                        label="Latitude"
-                        name="geo.lat"
-                        type="number"
-                        step="any"
-                        value={formData.geo?.lat || ""}
-                        onChange={(e) => handleInputChange("geo.lat", parseFloat(e.target.value) || "")}
-                        placeholder="e.g., 23.8103"
-                      />
-
-                      <InputField
-                        label="Longitude"
-                        name="geo.lng"
-                        type="number"
-                        step="any"
-                        value={formData.geo?.lng || ""}
-                        onChange={(e) => handleInputChange("geo.lng", parseFloat(e.target.value) || "")}
-                        placeholder="e.g., 90.4125"
-                      />
+              <div className="space-y-8">
+                {/* Manufacturers */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Supported Manufacturers
+                  </label>
+                  
+                  {selectedManufacturersDetails.length > 0 ? (
+                    <div className="space-y-3">
+                      <div className="flex items-center p-3 border border-gray-300 rounded-lg bg-gray-50">
+                        <BuildingOffice2Icon className="w-8 h-8 text-gray-400 mr-3" />
+                        <div className="flex-1">
+                          <p className="font-medium text-gray-900">
+                            {selectedManufacturersDetails.length} manufacturers selected
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            {selectedManufacturersDetails.slice(0, 2).map(m => m.name).join(', ')}
+                            {selectedManufacturersDetails.length > 2 && ` +${selectedManufacturersDetails.length - 2} more`}
+                          </p>
+                        </div>
+                        <Button
+                          text="Change"
+                          variant="outlined"
+                          onClick={() => setManufacturerSelectorOpen(true)}
+                          fullWidth={false}
+                        />
+                      </div>
+                      
+                      {/* Selected Manufacturers List */}
+                      <div className="border border-gray-200 rounded-lg p-4 bg-gray-50 max-h-64 overflow-y-auto">
+                        <h4 className="text-sm font-medium text-gray-800 mb-3">
+                          Selected Manufacturers ({selectedManufacturersDetails.length})
+                        </h4>
+                        
+                        <div className="space-y-2">
+                          {selectedManufacturersDetails.map((manufacturer) => (
+                            <div
+                              key={manufacturer._id}
+                              className="flex items-center justify-between bg-white p-3 rounded border border-gray-200"
+                            >
+                              <div className="flex items-center space-x-3">
+                                <div className="w-10 h-10 bg-gray-200 rounded flex items-center justify-center overflow-hidden">
+                                  {manufacturer.logo ? (
+                                    <img
+                                      src={manufacturer.logo}
+                                      alt={manufacturer.name}
+                                      className="w-full h-full object-cover"
+                                    />
+                                  ) : (
+                                    <BuildingOffice2Icon className="w-5 h-5 text-gray-400" />
+                                  )}
+                                </div>
+                                <div>
+                                  <p className="text-sm font-medium text-gray-900">{manufacturer.name}</p>
+                                  <p className="text-xs text-gray-500">{manufacturer.country}</p>
+                                </div>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveManufacturer(manufacturer._id)}
+                                className="text-red-500 hover:text-red-600 transition-colors"
+                              >
+                                <XMarkIcon className="w-5 h-5" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
                     </div>
-                  </div>
-
-                  <div className="border-t pt-6">
-                    <h4 className="text-md font-medium text-gray-900 mb-4">Contact Information</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <InputField
-                        label="Phone"
-                        name="contact.phone"
-                        value={formData.contact?.phone || ""}
-                        onChange={(e) => handleInputChange("contact.phone", e.target.value)}
-                        placeholder="Enter phone number"
-                      />
-
-                      <InputField
-                        label="Email"
-                        name="contact.email"
-                        type="email"
-                        value={formData.contact?.email || ""}
-                        onChange={(e) => handleInputChange("contact.email", e.target.value)}
-                        placeholder="Enter email address"
-                      />
-                    </div>
-                  </div>
+                  ) : (
+                    <Button
+                      text="Select Manufacturers"
+                      variant="outlined"
+                      onClick={() => setManufacturerSelectorOpen(true)}
+                      fullWidth={true}
+                      startIcon={<PlusIcon className="w-5 h-5" />}
+                    />
+                  )}
                 </div>
-              </div>
 
-              {/* Right Column - Supported Services */}
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-6">Supported Services</h3>
-                
-                <div className="space-y-8">
-                  {/* Manufacturers */}
-                  <div>
-                    <h4 className="text-md font-medium text-gray-900 mb-4">Supported Manufacturers</h4>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3 max-h-60 overflow-y-auto border border-gray-200 rounded-lg p-4">
-                      {manufacturers.map((manufacturer) => (
-                        <label key={manufacturer._id} className="flex items-center space-x-2 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={(formData.supportedManufacturers || []).includes(manufacturer._id)}
-                            onChange={() => handleManufacturerToggle(manufacturer._id)}
-                            className="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                          />
-                          <span className="text-sm text-gray-700">{manufacturer.name}</span>
-                        </label>
-                      ))}
+                {/* Fuel Types */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Supported Fuel Types
+                  </label>
+                  
+                  {selectedFuelTypesDetails.length > 0 ? (
+                    <div className="space-y-3">
+                      <div className="flex items-center p-3 border border-gray-300 rounded-lg bg-gray-50">
+                        <FireIcon className="w-8 h-8 text-gray-400 mr-3" />
+                        <div className="flex-1">
+                          <p className="font-medium text-gray-900">
+                            {selectedFuelTypesDetails.length} fuel types selected
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            {selectedFuelTypesDetails.slice(0, 2).map(f => f.title).join(', ')}
+                            {selectedFuelTypesDetails.length > 2 && ` +${selectedFuelTypesDetails.length - 2} more`}
+                          </p>
+                        </div>
+                        <Button
+                          text="Change"
+                          variant="outlined"
+                          onClick={() => setFuelTypeSelectorOpen(true)}
+                          fullWidth={false}
+                        />
+                      </div>
+                      
+                      {/* Selected Fuel Types List */}
+                      <div className="border border-gray-200 rounded-lg p-4 bg-gray-50 max-h-64 overflow-y-auto">
+                        <h4 className="text-sm font-medium text-gray-800 mb-3">
+                          Selected Fuel Types ({selectedFuelTypesDetails.length})
+                        </h4>
+                        
+                        <div className="space-y-2">
+                          {selectedFuelTypesDetails.map((fuelType) => (
+                            <div
+                              key={fuelType._id}
+                              className="flex items-center justify-between bg-white p-3 rounded border border-gray-200"
+                            >
+                              <div className="flex items-center space-x-3">
+                                <div className="w-10 h-10 bg-gray-200 rounded flex items-center justify-center overflow-hidden">
+                                  {fuelType.image ? (
+                                    <img
+                                      src={fuelType.image}
+                                      alt={fuelType.title}
+                                      className="w-full h-full object-cover"
+                                    />
+                                  ) : (
+                                    <FireIcon className="w-5 h-5 text-gray-400" />
+                                  )}
+                                </div>
+                                <div>
+                                  <p className="text-sm font-medium text-gray-900">{fuelType.title}</p>
+                                  <p className="text-xs text-gray-500">{fuelType.value}</p>
+                                </div>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveFuelType(fuelType._id)}
+                                className="text-red-500 hover:text-red-600 transition-colors"
+                              >
+                                <XMarkIcon className="w-5 h-5" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
                     </div>
-                    <p className="text-xs text-gray-500 mt-2">
-                      Selected: {(formData.supportedManufacturers || []).length} manufacturers
-                    </p>
-                  </div>
-
-                  {/* Fuel Types */}
-                  <div>
-                    <h4 className="text-md font-medium text-gray-900 mb-4">Supported Fuel Types</h4>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3 max-h-60 overflow-y-auto border border-gray-200 rounded-lg p-4">
-                      {fuelTypes.map((fuelType) => (
-                        <label key={fuelType._id} className="flex items-center space-x-2 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={(formData.supportedFuelTypes || []).includes(fuelType._id)}
-                            onChange={() => handleFuelTypeToggle(fuelType._id)}
-                            className="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                          />
-                          <span className="text-sm text-gray-700">{fuelType.title}</span>
-                        </label>
-                      ))}
-                    </div>
-                    <p className="text-xs text-gray-500 mt-2">
-                      Selected: {(formData.supportedFuelTypes || []).length} fuel types
-                    </p>
-                  </div>
+                  ) : (
+                    <Button
+                      text="Select Fuel Types"
+                      variant="outlined"
+                      onClick={() => setFuelTypeSelectorOpen(true)}
+                      fullWidth={true}
+                      startIcon={<PlusIcon className="w-5 h-5" />}
+                    />
+                  )}
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* Action Buttons */}
-            <div className="mt-8 flex justify-end space-x-4 bg-white rounded-lg shadow-sm p-6">
-              <Button
-                text="Cancel"
-                variant="secondary"
-                onClick={() => navigate('/garages')}
-                disabled={loading}
-              />
-              <Button
-                text={loading ? "Saving..." : (isEditing ? "Update Garage" : "Create Garage")}
-                type="submit"
-                disabled={loading}
-              />
-            </div>
-          </form>
+          <hr className="my-8 border-gray-200" />
+
+          {/* Action Buttons */}
+          <div className="flex gap-3 justify-end">
+            <Button
+              text="Cancel"
+              variant="outlined"
+              onClick={handleCancel}
+              disabled={loading}
+              fullWidth={false}
+            />
+
+            <Button
+              text={loading ? "Saving..." : (isEditing ? "Update Garage" : "Create Garage")}
+              variant="contained"
+              onClick={handleSave}
+              disabled={loading}
+              fullWidth={false}
+              startIcon={loading && (
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+              )}
+            />
+          </div>
         </div>
       </div>
+
+      {/* Modal Selectors */}
+      <ManufacturerMultiSelector
+        isOpen={manufacturerSelectorOpen}
+        onClose={() => setManufacturerSelectorOpen(false)}
+        onSelect={handleManufacturerSelect}
+        selectedManufacturers={formData.supportedManufacturers || []}
+        title="Select Supported Manufacturers"
+      />
+
+      <FuelTypeMultiSelector
+        isOpen={fuelTypeSelectorOpen}
+        onClose={() => setFuelTypeSelectorOpen(false)}
+        onSelect={handleFuelTypeSelect}
+        selectedFuelTypes={formData.supportedFuelTypes || []}
+        title="Select Supported Fuel Types"
+      />
     </div>
   );
 };

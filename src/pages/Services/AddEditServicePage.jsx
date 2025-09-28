@@ -6,7 +6,7 @@ import FormField from '../../components/forms/FormField';
 import Button from '../../components/Button';
 import FileUpload from '../../components/forms/FileUpload';
 import AlertMessage from '../../components/AlertMessage';
-import PartsSelector from '../../components/selectors/PartsSelector';
+import PartsMultiSelector from '../../components/selectors/PartsMultiSelector';
 import { useServiceForm } from '../../hooks/useServiceForm';
 import { partsService } from '../../api/partsService';
 
@@ -382,7 +382,7 @@ const AddEditServicePage = () => {
       </div>
 
       {/* Parts Selector Modal */}
-      <PartsSelector
+      <PartsMultiSelector
         isOpen={partsSelector.open}
         onClose={() => setPartsSelector({ open: false })}
         onSelect={handlePartsSelect}

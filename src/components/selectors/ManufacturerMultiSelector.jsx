@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { XMarkIcon, MagnifyingGlassIcon, CheckIcon } from '@heroicons/react/24/solid';
-import { CubeIcon } from '@heroicons/react/24/outline';
-import Button from '../Button';
-import { partsService } from '../../api/partsService';
+import React, { useState, useEffect } from "react";
+import { MagnifyingGlassIcon, XMarkIcon, CheckIcon } from "@heroicons/react/24/solid";
+import { BuildingOffice2Icon } from "@heroicons/react/24/outline";
+import { manufacturersService } from "../../api/manufacturersService";
+import Button from "../Button";
 
-const PartsSelector = ({ 
+const ManufacturerMultiSelector = ({ 
   isOpen, 
   onClose, 
   onSelect, 
-  selectedParts = [],
-  title = "Select Parts Needed" 
+  selectedManufacturers = [],
+  title = "Select Manufacturers" 
 }) => {
-  const [parts, setParts] = useState([]);
+  const [manufacturers, setManufacturers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -21,42 +21,42 @@ const PartsSelector = ({
     total: 0,
     limit: 12
   });
-  const [tempSelectedParts, setTempSelectedParts] = useState([]);
+  const [tempSelectedManufacturers, setTempSelectedManufacturers] = useState([]);
 
   // Initialize temp selection when modal opens
   useEffect(() => {
     if (isOpen) {
-      setTempSelectedParts([...selectedParts]);
+      setTempSelectedManufacturers([...selectedManufacturers]);
     }
-  }, [isOpen, selectedParts]);
+  }, [isOpen, selectedManufacturers]);
 
-  // Fetch parts
-  const fetchParts = async (page = 1, search = '') => {
+  // Fetch manufacturers
+  const fetchManufacturers = async (page = 1, search = '') => {
     try {
       setLoading(true);
       setError(null);
       
-      const response = await partsService.getAllParts(page, pagination.limit, search);
+      const response = await manufacturersService.getAllManufacturers(page, pagination.limit, search);
       
-      setParts(response.parts || []);
+      setManufacturers(response.data || []);
       setPagination({
         page: response.page || 1,
-        pages: response.pages || 1,
+        pages: response.totalPages || response.pages || 1,
         total: response.total || 0,
         limit: pagination.limit
       });
     } catch (err) {
-      console.error('Error fetching parts:', err);
-      setError('Failed to load parts');
+      console.error('Error fetching manufacturers:', err);
+      setError('Failed to load manufacturers');
     } finally {
       setLoading(false);
     }
   };
 
-  // Fetch parts when modal opens or search changes
+  // Fetch manufacturers when modal opens
   useEffect(() => {
     if (isOpen) {
-      fetchParts(1, '');
+      fetchManufacturers(1, '');
       setSearchQuery('');
     }
   }, [isOpen]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -67,7 +67,7 @@ const PartsSelector = ({
     setSearchQuery(value);
     // Debounce search
     const timeoutId = setTimeout(() => {
-      fetchParts(1, value);
+      fetchManufacturers(1, value);
     }, 300);
     
     return () => clearTimeout(timeoutId);
@@ -75,30 +75,42 @@ const PartsSelector = ({
 
   // Handle page change
   const handlePageChange = (newPage) => {
-    fetchParts(newPage, searchQuery);
+    fetchManufacturers(newPage, searchQuery);
   };
 
-  // Handle part selection toggle
-  const handlePartToggle = (partId) => {
-    setTempSelectedParts(prev => {
-      const isSelected = prev.includes(partId);
+  // Handle manufacturer selection toggle
+  const handleManufacturerToggle = (manufacturerId) => {
+    setTempSelectedManufacturers(prev => {
+      const isSelected = prev.includes(manufacturerId);
       if (isSelected) {
-        return prev.filter(id => id !== partId);
+        return prev.filter(id => id !== manufacturerId);
       } else {
-        return [...prev, partId];
+        return [...prev, manufacturerId];
       }
     });
   };
 
+  // Handle select all
+  const handleSelectAll = () => {
+    const currentPageIds = manufacturers.map(m => m._id);
+    const newSelected = [...new Set([...tempSelectedManufacturers, ...currentPageIds])];
+    setTempSelectedManufacturers(newSelected);
+  };
+
+  // Handle clear all
+  const handleClearAll = () => {
+    setTempSelectedManufacturers([]);
+  };
+
   // Handle confirm selection
   const handleConfirm = () => {
-    onSelect(tempSelectedParts);
+    onSelect(tempSelectedManufacturers);
     onClose();
   };
 
   // Handle cancel
   const handleCancel = () => {
-    setTempSelectedParts([...selectedParts]);
+    setTempSelectedManufacturers([...selectedManufacturers]);
     onClose();
   };
 
@@ -112,7 +124,7 @@ const PartsSelector = ({
           <div>
             <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
             <p className="text-sm text-gray-600 mt-1">
-              Selected: {tempSelectedParts.length} part{tempSelectedParts.length !== 1 ? 's' : ''}
+              Selected: {tempSelectedManufacturers.length} manufacturer{tempSelectedManufacturers.length !== 1 ? 's' : ''}
             </p>
           </div>
           <button
@@ -125,15 +137,33 @@ const PartsSelector = ({
 
         {/* Search */}
         <div className="p-6 border-b border-gray-200">
-          <div className="relative">
-            <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search parts..."
-              value={searchQuery}
-              onChange={handleSearch}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-transparent"
-            />
+          <div className="flex gap-4">
+            <div className="flex-1 relative">
+              <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search manufacturers..."
+                value={searchQuery}
+                onChange={handleSearch}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-transparent"
+              />
+            </div>
+            <div className="flex gap-2">
+              <Button
+                text="Select All"
+                variant="outlined"
+                onClick={handleSelectAll}
+                disabled={loading || manufacturers.length === 0}
+                fullWidth={false}
+              />
+              <Button
+                text="Clear All"
+                variant="outlined"
+                onClick={handleClearAll}
+                disabled={loading || tempSelectedManufacturers.length === 0}
+                fullWidth={false}
+              />
+            </div>
           </div>
         </div>
 
@@ -142,7 +172,7 @@ const PartsSelector = ({
           {loading ? (
             <div className="flex justify-center items-center py-8">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
-              <span className="ml-2 text-gray-600">Loading parts...</span>
+              <span className="ml-2 text-gray-600">Loading manufacturers...</span>
             </div>
           ) : error ? (
             <div className="text-center py-8">
@@ -150,26 +180,25 @@ const PartsSelector = ({
               <Button
                 text="Retry"
                 variant="outlined"
-                onClick={() => fetchParts(pagination.page, searchQuery)}
+                onClick={() => fetchManufacturers(pagination.page, searchQuery)}
                 fullWidth={false}
               />
             </div>
-          ) : parts.length === 0 ? (
+          ) : manufacturers.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
-              {searchQuery ? 'No parts found matching your search' : 'No parts available'}
+              {searchQuery ? 'No manufacturers found matching your search' : 'No manufacturers available'}
             </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {parts.map((part) => {
-                const isSelected = tempSelectedParts.includes(part._id);
-                
+              {manufacturers.map((manufacturer) => {
+                const isSelected = tempSelectedManufacturers.includes(manufacturer._id);
                 return (
                   <div
-                    key={part._id}
-                    onClick={() => handlePartToggle(part._id)}
+                    key={manufacturer._id}
+                    onClick={() => handleManufacturerToggle(manufacturer._id)}
                     className={`relative flex flex-col items-center p-4 border-2 rounded-lg cursor-pointer transition-all duration-200 hover:shadow-md ${
-                      isSelected
-                        ? 'border-primary-600 bg-blue-50 shadow-md'
+                      isSelected 
+                        ? 'border-primary-600 bg-blue-50 shadow-md' 
                         : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
@@ -179,33 +208,29 @@ const PartsSelector = ({
                         <CheckIcon className="w-4 h-4 text-white" />
                       </div>
                     )}
-                    
-                    {/* Part image */}
+
+                    {/* Logo */}
                     <div className="w-16 h-16 mb-3 flex items-center justify-center">
-                      {part.image ? (
+                      {manufacturer.logo ? (
                         <img
-                          src={part.image}
-                          alt={part.name}
+                          src={manufacturer.logo}
+                          alt={`${manufacturer.name} logo`}
                           className="w-full h-full object-contain rounded-lg"
                         />
                       ) : (
                         <div className="w-full h-full bg-gray-200 rounded-lg flex items-center justify-center">
-                          <CubeIcon className="w-8 h-8 text-gray-400" />
+                          <BuildingOffice2Icon className="w-8 h-8 text-gray-400" />
                         </div>
                       )}
                     </div>
-                    
-                    {/* Part info */}
+
+                    {/* Info */}
                     <div className="text-center">
-                      <h3 className="font-semibold text-gray-900 text-sm mb-1 line-clamp-1">
-                        {part.name}
-                      </h3>
-                      <p className="text-xs text-gray-500 mb-1">
-                        SKU: {part.sku || 'N/A'}
-                      </p>
-                      <p className="text-sm font-semibold text-blue-600">
-                        ${part.price?.toFixed(2) || '0.00'}
-                      </p>
+                      <h3 className="font-semibold text-gray-900 text-sm mb-1 line-clamp-1">{manufacturer.name}</h3>
+                      <p className="text-xs text-gray-500 mb-1">{manufacturer.country}</p>
+                      {manufacturer.founded && (
+                        <p className="text-xs text-gray-400">Est. {manufacturer.founded}</p>
+                      )}
                     </div>
                   </div>
                 );
@@ -219,7 +244,7 @@ const PartsSelector = ({
           <div className="border-t border-gray-200 px-6 py-4">
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-700">
-                Showing {parts.length} of {pagination.total} parts
+                Showing {manufacturers.length} of {pagination.total} manufacturers
               </span>
               <div className="flex gap-2">
                 <Button
@@ -253,7 +278,8 @@ const PartsSelector = ({
             fullWidth={false}
           />
           <Button
-            text={`Confirm Selection (${tempSelectedParts.length})`}
+            text={`Confirm (${tempSelectedManufacturers.length})`}
+            variant="contained"
             onClick={handleConfirm}
             disabled={loading}
             fullWidth={false}
@@ -264,4 +290,4 @@ const PartsSelector = ({
   );
 };
 
-export default PartsSelector;
+export default ManufacturerMultiSelector;
