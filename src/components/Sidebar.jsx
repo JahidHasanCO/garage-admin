@@ -5,6 +5,7 @@ import {
   HomeIcon,
   CubeIcon,
   FireIcon,
+  BuildingOffice2Icon,
   Bars3Icon,
   ChevronLeftIcon,
 } from "@heroicons/react/24/solid";
@@ -24,6 +25,11 @@ const menuItems = [
     text: "Fuel Types",
     icon: <FireIcon className="w-6 h-6" />,
     path: "/fuel-types",
+  },
+  {
+    text: "Manufacturers",
+    icon: <BuildingOffice2Icon className="w-6 h-6" />,
+    path: "/manufacturers",
   },
 ];
 

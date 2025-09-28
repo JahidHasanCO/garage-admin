@@ -6,6 +6,8 @@ import PartsPage from "../pages/Parts/PartsPage";
 import AddEditPartPage from "../pages/Parts/AddEditPartPage";
 import FuelTypesPage from "../pages/FuelTypes/FuelTypesPage";
 import AddEditFuelTypePage from "../pages/FuelTypes/AddEditFuelTypePage";
+import ManufacturersPage from "../pages/Manufacturers/ManufacturersPage";
+import AddEditManufacturerPage from "../pages/Manufacturers/AddEditManufacturerPage";
 import { useAuth } from "../contexts/useAuthContext";
 import { RouteNames } from "./RouteNames";
 
@@ -39,6 +41,14 @@ export default function AppRoutes() {
         <Route index element={<FuelTypesPage />} />
         <Route path="add" element={<AddEditFuelTypePage />} />
         <Route path="edit/:id" element={<AddEditFuelTypePage />} />
+      </Route>
+      <Route
+        path={RouteNames.MANUFACTURERS}
+        element={token ? <DashboardLayout /> : <Navigate to={RouteNames.LOGIN} replace />}
+      >
+        <Route index element={<ManufacturersPage />} />
+        <Route path="add" element={<AddEditManufacturerPage />} />
+        <Route path="edit/:id" element={<AddEditManufacturerPage />} />
       </Route>
       <Route path="/" element={<Navigate to={RouteNames.DASHBOARD} replace />} />
       <Route path="*" element={<div>404 Not Found</div>} />
