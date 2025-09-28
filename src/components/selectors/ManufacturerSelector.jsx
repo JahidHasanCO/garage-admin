@@ -92,7 +92,7 @@ const ManufacturerSelector = ({ isOpen, onClose, onSelect, selectedManufacturer 
               placeholder="Search manufacturers..."
               value={searchQuery}
               onChange={handleSearch}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-transparent"
             />
           </div>
         </div>
@@ -101,7 +101,7 @@ const ManufacturerSelector = ({ isOpen, onClose, onSelect, selectedManufacturer 
         <div className="flex-1 overflow-auto p-6">
           {loading ? (
             <div className="flex justify-center items-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
               <span className="ml-2 text-gray-600">Loading manufacturers...</span>
             </div>
           ) : manufacturers.length === 0 ? (
@@ -116,13 +116,13 @@ const ManufacturerSelector = ({ isOpen, onClose, onSelect, selectedManufacturer 
                   onClick={() => handleSelect(manufacturer)}
                   className={`relative flex flex-col items-center p-4 border-2 rounded-lg cursor-pointer transition-all duration-200 hover:shadow-md ${
                     selectedManufacturer?._id === manufacturer._id 
-                      ? 'border-blue-500 bg-blue-50 shadow-md' 
+                      ? 'border-primary-600 bg-blue-50 shadow-md' 
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >
                   {/* Selection indicator */}
                   {selectedManufacturer?._id === manufacturer._id && (
-                    <div className="absolute top-2 right-2 bg-blue-500 rounded-full p-1">
+                    <div className="absolute top-2 right-2 bg-primary-600 rounded-full p-1">
                       <CheckIcon className="w-4 h-4 text-white" />
                     </div>
                   )}
