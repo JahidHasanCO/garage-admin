@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { PhotoIcon, ArrowUpTrayIcon, XMarkIcon } from "@heroicons/react/24/solid";
 
 const FileUpload = ({
@@ -14,6 +14,11 @@ const FileUpload = ({
   const [preview, setPreview] = useState(value || null);
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef(null);
+
+  // Update preview when value prop changes
+  useEffect(() => {
+    setPreview(value || null);
+  }, [value]);
 
   const handleFileSelect = (file) => {
     if (file) {

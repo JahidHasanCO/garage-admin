@@ -53,7 +53,9 @@ export const useServicePackageForm = (servicePackageId = null) => {
             image: servicePackage.image || ''
           });
           
+          console.log('Service Package Image:', servicePackage.image);
           if (servicePackage.image) {
+            console.log('Setting image preview to:', servicePackage.image);
             setImagePreview(servicePackage.image);
           }
         } catch (err) {
