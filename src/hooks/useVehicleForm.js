@@ -17,10 +17,10 @@ const validateVehicleForm = (formData) => {
     errors.year = "Year must be a valid year between 1900 and next year";
   }
   
-  if (!formData.license_plate?.trim()) {
-    errors.license_plate = "License plate is required";
-  } else if (!/^[A-Z0-9-]{3,10}$/.test(formData.license_plate.toUpperCase())) {
-    errors.license_plate = "License plate must be 3-10 characters (letters, numbers, and hyphens only)";
+  if (formData.license_plate?.trim()) {
+    if (!/^[A-Z0-9-]{3,10}$/.test(formData.license_plate.toUpperCase())) {
+      errors.license_plate = "License plate must be 3-10 characters (letters, numbers, and hyphens only)";
+    }
   }
   
   if (formData.vin && formData.vin.trim()) {

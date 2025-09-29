@@ -217,7 +217,6 @@ export default function AddEditVehiclePage() {
                   onChange={handleChange}
                   error={errors.license_plate}
                   placeholder="Enter license plate (e.g., DHA-1234)"
-                  required
                   helperText="3-10 characters, letters, numbers, and hyphens only"
                 />
 
@@ -301,6 +300,7 @@ export default function AddEditVehiclePage() {
                 name="transmission"
                 type="select"
                 value={formData.transmission}
+                placeholder="transmission: manual, automatic, cvt, semi-automatic"
                 onChange={handleChange}
                 error={errors.transmission}
                 options={transmissionOptions}
