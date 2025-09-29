@@ -1,6 +1,4 @@
-import React from "react";
 import Button from "../../components/Button";
-import SearchBar from "../../components/SearchBar";
 import { PlusIcon, PencilIcon, TrashIcon, CubeIcon, BuildingStorefrontIcon, FireIcon } from "@heroicons/react/24/solid";
 
 const ServicePackagesTable = ({
@@ -11,7 +9,6 @@ const ServicePackagesTable = ({
   onEdit,
   onDelete,
   onAddServicePackage,
-  onSearch,
 }) => {
   const formatDate = (dateString) =>
     new Date(dateString).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
@@ -49,11 +46,7 @@ const ServicePackagesTable = ({
             )}
           </div>
           <div className="flex items-center gap-3">
-            <SearchBar
-              placeholder="Search service packages..."
-              value={searchQuery}
-              onChange={onSearch}
-            />
+
             <Button
               text="Add Package"
               variant="outlined"
@@ -67,7 +60,7 @@ const ServicePackagesTable = ({
         {/* Table */}
         <div className="flex-1 overflow-auto">
           <table className="min-w-full table-auto">
-            <thead className="bg-gray-100 sticky top-0">
+            <thead className="bg-white sticky top-0">
               <tr>
                 <th className="text-left font-semibold px-4 py-2 text-gray-700">Package</th>
                 <th className="text-left font-semibold px-4 py-2 text-gray-700">Price</th>
@@ -109,10 +102,10 @@ const ServicePackagesTable = ({
                   </td>
                 </tr>
               ) : (
-                servicePackages.map((servicePackage, idx) => (
+                servicePackages.map((servicePackage) => (
                   <tr
                     key={servicePackage._id}
-                    className={`${idx % 2 === 0 ? "bg-gray-50" : "bg-white"} hover:bg-gray-100 transition-colors`}
+                    className={`bg-white hover:bg-gray-100 transition-colors`}
                   >
                     <td className="px-4 py-3">
                       <div className="flex items-center space-x-3">

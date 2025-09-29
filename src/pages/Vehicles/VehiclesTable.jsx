@@ -58,7 +58,7 @@ const VehiclesTable = ({
         {/* Table */}
         <div className="flex-1 overflow-auto">
           <table className="min-w-full table-auto">
-            <thead className="bg-gray-100 sticky top-0">
+            <thead className="bg-white sticky top-0">
               <tr>
                 <th className="text-left font-semibold px-4 py-2 text-gray-700">Image</th>
                 <th className="text-left font-semibold px-4 py-2 text-gray-700">Vehicle</th>
@@ -100,10 +100,10 @@ const VehiclesTable = ({
                   </td>
                 </tr>
               ) : (
-                vehicles.map((vehicle, idx) => (
+                vehicles.map((vehicle) => (
                   <tr
                     key={vehicle._id}
-                    className={`${idx % 2 === 0 ? "bg-gray-50" : "bg-white"} hover:bg-gray-100 transition-colors`}
+                    className={`bg-white hover:bg-gray-100 transition-colors`}
                   >
                     <td className="px-4 py-3">
                       {vehicle.image ? (
