@@ -21,7 +21,7 @@ const validateFuelTypeForm = (formData) => {
   };
 };
 
-export const useFuelTypeForm = (initialData = null, fuelTypeId = null) => {
+export const useFuelTypeForm = (fuelTypeId = null, initialData = null) => {
   const [formData, setFormData] = useState({
     title: "",
     value: "",
@@ -36,18 +36,57 @@ export const useFuelTypeForm = (initialData = null, fuelTypeId = null) => {
 
   // Initialize form with data (for edit mode)
   useEffect(() => {
-    if (initialData) {
-      setFormData({
-        title: initialData.title || "",
-        value: initialData.value || "",
-        image: initialData.image || null,
-      });
-      
-      if (initialData.image) {
-        setImagePreview(initialData.image);
+    const initializeForm = async () => {
+      if (initialData) {
+        // Use provided initial data
+        setFormData({
+          title: initialData.title || "",
+          value: initialData.value || "",
+          image: initialData.image || null,
+        });
+        
+        if (initialData.image) {
+          setImagePreview(initialData.image);
+        }
+      } else if (fuelTypeId) {
+        // Fetch fuel type data for editing
+        try {
+          setLoading(true);
+          setSubmitError(null);
+          console.log('Fetching fuel type data for ID:', fuelTypeId);
+          const response = await fuelTypesService.getFuelTypeById(fuelTypeId);
+          console.log('Fuel type data response:', response);
+          const fuelType = response.fuelType || response.data || response;
+          
+          if (!fuelType) {
+            throw new Error('Fuel type not found');
+          }
+          
+          setFormData({
+            title: fuelType.title || "",
+            value: fuelType.value || "",
+            image: fuelType.image || null,
+          });
+          
+          if (fuelType.image) {
+            setImagePreview(fuelType.image);
+          }
+          
+          console.log('Fuel type form data initialized:', {
+            title: fuelType.title,
+            value: fuelType.value
+          });
+        } catch (err) {
+          console.error('Error fetching fuel type:', err);
+          setSubmitError(`Failed to load fuel type data: ${err.message}`);
+        } finally {
+          setLoading(false);
+        }
       }
-    }
-  }, [initialData]);
+    };
+
+    initializeForm();
+  }, [fuelTypeId, initialData]);
 
   // Handle form field changes
   const handleChange = (e) => {

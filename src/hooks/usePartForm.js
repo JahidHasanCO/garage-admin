@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { validatePartForm } from "../utils/validation";
 import { partsService, preparePartFormData } from "../api/partsService";
 
-export const usePartForm = (initialData = null, partId = null) => {
+export const usePartForm = (partId = null, initialData = null) => {
   const [formData, setFormData] = useState({
     name: "",
     sku: "",
@@ -19,20 +19,62 @@ export const usePartForm = (initialData = null, partId = null) => {
 
   // Initialize form with data (for edit mode)
   useEffect(() => {
-    if (initialData) {
-      setFormData({
-        name: initialData.name || "",
-        sku: initialData.sku || "",
-        description: initialData.description || "",
-        price: initialData.price?.toString() || "",
-        image: initialData.image || null,
-      });
-      
-      if (initialData.image) {
-        setImagePreview(initialData.image);
+    const initializeForm = async () => {
+      if (initialData) {
+        // Use provided initial data
+        setFormData({
+          name: initialData.name || "",
+          sku: initialData.sku || "",
+          description: initialData.description || "",
+          price: initialData.price?.toString() || "",
+          image: initialData.image || null,
+        });
+        
+        if (initialData.image) {
+          setImagePreview(initialData.image);
+        }
+      } else if (partId) {
+        // Fetch part data for editing
+        try {
+          setLoading(true);
+          setSubmitError(null);
+          console.log('Fetching part data for ID:', partId);
+          const response = await partsService.getPartById(partId);
+          console.log('Part data response:', response);
+          const part = response.part || response.data || response;
+          
+          if (!part) {
+            throw new Error('Part not found');
+          }
+          
+          setFormData({
+            name: part.name || "",
+            sku: part.sku || "",
+            description: part.description || "",
+            price: part.price?.toString() || "",
+            image: part.image || null,
+          });
+          
+          if (part.image) {
+            setImagePreview(part.image);
+          }
+          
+          console.log('Part form data initialized:', {
+            name: part.name,
+            sku: part.sku,
+            price: part.price
+          });
+        } catch (err) {
+          console.error('Error fetching part:', err);
+          setSubmitError(`Failed to load part data: ${err.message}`);
+        } finally {
+          setLoading(false);
+        }
       }
-    }
-  }, [initialData]);
+    };
+
+    initializeForm();
+  }, [partId, initialData]);
 
   // Handle form field changes
   const handleChange = (e) => {

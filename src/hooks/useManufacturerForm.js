@@ -30,7 +30,7 @@ const validateManufacturerForm = (formData) => {
   };
 };
 
-export const useManufacturerForm = (initialData = null, manufacturerId = null) => {
+export const useManufacturerForm = (manufacturerId = null, initialData = null) => {
   const [formData, setFormData] = useState({
     name: "",
     country: "",
@@ -47,20 +47,61 @@ export const useManufacturerForm = (initialData = null, manufacturerId = null) =
 
   // Initialize form with data (for edit mode)
   useEffect(() => {
-    if (initialData) {
-      setFormData({
-        name: initialData.name || "",
-        country: initialData.country || "",
-        founded: initialData.founded?.toString() || "",
-        website: initialData.website || "",
-        logo: initialData.logo || null,
-      });
-      
-      if (initialData.logo) {
-        setLogoPreview(initialData.logo);
+    const initializeForm = async () => {
+      if (initialData) {
+        // Use provided initial data
+        setFormData({
+          name: initialData.name || "",
+          country: initialData.country || "",
+          founded: initialData.founded?.toString() || "",
+          website: initialData.website || "",
+          logo: initialData.logo || null,
+        });
+        
+        if (initialData.logo) {
+          setLogoPreview(initialData.logo);
+        }
+      } else if (manufacturerId) {
+        // Fetch manufacturer data for editing
+        try {
+          setLoading(true);
+          setSubmitError(null);
+          console.log('Fetching manufacturer data for ID:', manufacturerId);
+          const response = await manufacturersService.getManufacturerById(manufacturerId);
+          console.log('Manufacturer data response:', response);
+          const manufacturer = response.manufacturer || response.data || response;
+          
+          if (!manufacturer) {
+            throw new Error('Manufacturer not found');
+          }
+          
+          setFormData({
+            name: manufacturer.name || "",
+            country: manufacturer.country || "",
+            founded: manufacturer.founded?.toString() || "",
+            website: manufacturer.website || "",
+            logo: manufacturer.logo || null,
+          });
+          
+          if (manufacturer.logo) {
+            setLogoPreview(manufacturer.logo);
+          }
+          
+          console.log('Manufacturer form data initialized:', {
+            name: manufacturer.name,
+            country: manufacturer.country
+          });
+        } catch (err) {
+          console.error('Error fetching manufacturer:', err);
+          setSubmitError(`Failed to load manufacturer data: ${err.message}`);
+        } finally {
+          setLoading(false);
+        }
       }
-    }
-  }, [initialData]);
+    };
+
+    initializeForm();
+  }, [manufacturerId, initialData]);
 
   // Handle form field changes
   const handleChange = (e) => {

@@ -1,21 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import FormField from "../../components/forms/FormField";
 import FileUpload from "../../components/forms/FileUpload";
 import Button from "../../components/Button";
 import AlertMessage from "../../components/AlertMessage";
 import { useManufacturerForm } from "../../hooks/useManufacturerForm";
-import { manufacturersService } from "../../api/manufacturersService";
 import PageHeader from "../../components/PageHeader";
 
 export default function AddEditManufacturerPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const isEditMode = !!id;
-
-  const [initialLoading, setInitialLoading] = useState(isEditMode);
-  const [loadError, setLoadError] = useState(null);
-  const [manufacturerData, setManufacturerData] = useState(null);
 
   const {
     formData,
@@ -27,26 +22,9 @@ export default function AddEditManufacturerPage() {
     handleLogoChange,
     handleSubmit,
     resetForm,
-  } = useManufacturerForm(manufacturerData, id);
+  } = useManufacturerForm(id, null); // Pass id as first parameter, null as second
 
-  // Load existing manufacturer data for edit mode
-  useEffect(() => {
-    const loadManufacturerData = async () => {
-      try {
-        setInitialLoading(true);
-        const data = await manufacturersService.getManufacturerById(id);
-        setManufacturerData(data);
-      } catch (error) {
-        setLoadError(error.message);
-      } finally {
-        setInitialLoading(false);
-      }
-    };
-
-    if (isEditMode) {
-      loadManufacturerData();
-    }
-  }, [id, isEditMode]);
+  // The useManufacturerForm hook handles loading manufacturer data internally
 
   const handleSave = async () => {
     await handleSubmit(
@@ -74,28 +52,12 @@ export default function AddEditManufacturerPage() {
     resetForm();
   };
 
-  if (initialLoading) {
+  // Show loading state while the hook is fetching manufacturer data in edit mode
+  if (isEditMode && loading && !formData.name && !submitError) {
     return (
       <div className="flex justify-center items-center h-96">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primaryDeep"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
         <span className="ml-4 text-lg font-medium">Loading manufacturer data...</span>
-      </div>
-    );
-  }
-
-  if (loadError) {
-    return (
-      <div className="p-6">
-        <AlertMessage type="error" message={loadError} />
-        <button
-          onClick={() => navigate("/manufacturers")}
-          className="mt-4 inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primaryDeep"
-        >
-          <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
-          </svg>
-          Back to Manufacturers
-        </button>
       </div>
     );
   }
@@ -115,6 +77,21 @@ export default function AddEditManufacturerPage() {
 
       {/* Error Alert */}
       {submitError && <AlertMessage type="error" message={submitError} />}
+
+      {/* Show error if manufacturer data failed to load in edit mode */}
+      {isEditMode && submitError && submitError.includes('load manufacturer data') && (
+        <div className="mb-4">
+          <button
+            onClick={() => navigate("/manufacturers")}
+            className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          >
+            <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
+            </svg>
+            Back to Manufacturers
+          </button>
+        </div>
+      )}
 
       {/* Main Form Card */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 w-full">

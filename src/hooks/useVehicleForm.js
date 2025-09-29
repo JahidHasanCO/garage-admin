@@ -51,7 +51,7 @@ const validateVehicleForm = (formData) => {
   };
 };
 
-export const useVehicleForm = (initialData = null, vehicleId = null) => {
+export const useVehicleForm = (vehicleId = null, initialData = null) => {
   const [formData, setFormData] = useState({
     manufacturer: "",
     model: "",
@@ -76,35 +76,80 @@ export const useVehicleForm = (initialData = null, vehicleId = null) => {
 
   // Initialize form with data (for edit mode)
   useEffect(() => {
-    if (initialData) {
-      setFormData({
-        manufacturer: initialData.manufacturer?._id || "",
-        model: initialData.model || "",
-        year: initialData.year?.toString() || "",
-        vin: initialData.vin || "",
-        license_plate: initialData.license_plate || "",
-        color: initialData.color || "",
-        mileage: initialData.mileage?.toString() || "0",
-        fuel_type: initialData.fuel_type?._id || "",
-        transmission: initialData.transmission || "manual",
-        description: initialData.description || "",
-        image: initialData.image || null,
-      });
-      
-      // Set selected objects for display
-      if (initialData.manufacturer) {
-        setSelectedManufacturer(initialData.manufacturer);
+    const initializeForm = async () => {
+      if (initialData) {
+        // Use provided initial data
+        setFormData({
+          manufacturer: initialData.manufacturer?._id || "",
+          model: initialData.model || "",
+          year: initialData.year?.toString() || "",
+          vin: initialData.vin || "",
+          license_plate: initialData.license_plate || "",
+          color: initialData.color || "",
+          mileage: initialData.mileage?.toString() || "0",
+          fuel_type: initialData.fuel_type?._id || "",
+          transmission: initialData.transmission || "manual",
+          description: initialData.description || "",
+          image: initialData.image || null,
+        });
+        
+        setSelectedManufacturer(initialData.manufacturer || null);
+        setSelectedFuelType(initialData.fuel_type || null);
+        
+        if (initialData.image) {
+          setImagePreview(initialData.image);
+        }
+      } else if (vehicleId) {
+        // Fetch vehicle data for editing
+        try {
+          setLoading(true);
+          setSubmitError(null);
+          console.log('Fetching vehicle data for ID:', vehicleId);
+          const response = await vehiclesService.getVehicleById(vehicleId);
+          console.log('Vehicle data response:', response);
+          const vehicle = response.vehicle || response.data || response;
+          
+          if (!vehicle) {
+            throw new Error('Vehicle not found');
+          }
+          
+          setFormData({
+            manufacturer: vehicle.manufacturer?._id || "",
+            model: vehicle.model || "",
+            year: vehicle.year?.toString() || "",
+            vin: vehicle.vin || "",
+            license_plate: vehicle.license_plate || "",
+            color: vehicle.color || "",
+            mileage: vehicle.mileage?.toString() || "0",
+            fuel_type: vehicle.fuel_type?._id || "",
+            transmission: vehicle.transmission || "manual",
+            description: vehicle.description || "",
+            image: vehicle.image || null,
+          });
+          
+          setSelectedManufacturer(vehicle.manufacturer || null);
+          setSelectedFuelType(vehicle.fuel_type || null);
+          
+          if (vehicle.image) {
+            setImagePreview(vehicle.image);
+          }
+          
+          console.log('Vehicle form data initialized:', {
+            model: vehicle.model,
+            year: vehicle.year,
+            manufacturer: vehicle.manufacturer?.name
+          });
+        } catch (err) {
+          console.error('Error fetching vehicle:', err);
+          setSubmitError(`Failed to load vehicle data: ${err.message}`);
+        } finally {
+          setLoading(false);
+        }
       }
-      
-      if (initialData.fuel_type) {
-        setSelectedFuelType(initialData.fuel_type);
-      }
-      
-      if (initialData.image) {
-        setImagePreview(initialData.image);
-      }
-    }
-  }, [initialData]);
+    };
+
+    initializeForm();
+  }, [vehicleId, initialData]);
 
   // Handle form field changes
   const handleChange = (e) => {

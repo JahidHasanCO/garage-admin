@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import FormField from "../../components/forms/FormField";
 import FileUpload from "../../components/forms/FileUpload";
 import Button from "../../components/Button";
 import AlertMessage from "../../components/AlertMessage";
 import { useVehicleForm } from "../../hooks/useVehicleForm";
-import { vehiclesService } from "../../api/vehiclesService";
 import PageHeader from "../../components/PageHeader";
 import ManufacturerSelector from "../../components/selectors/ManufacturerSelector";
 import FuelTypeSelector from "../../components/selectors/FuelTypeSelector";
@@ -15,10 +14,6 @@ export default function AddEditVehiclePage() {
   const navigate = useNavigate();
   const isEditMode = !!id;
 
-  const [initialLoading, setInitialLoading] = useState(isEditMode);
-  const [loadError, setLoadError] = useState(null);
-  const [vehicleData, setVehicleData] = useState(null);
-  
   // Modal states
   const [showManufacturerSelector, setShowManufacturerSelector] = useState(false);
   const [showFuelTypeSelector, setShowFuelTypeSelector] = useState(false);
@@ -37,26 +32,9 @@ export default function AddEditVehiclePage() {
     handleImageChange,
     handleSubmit,
     resetForm,
-  } = useVehicleForm(vehicleData, id);
+  } = useVehicleForm(id, null); // Pass id as first parameter, null as second
 
-  // Load existing vehicle data for edit mode
-  useEffect(() => {
-    const loadVehicleData = async () => {
-      try {
-        setInitialLoading(true);
-        const data = await vehiclesService.getVehicleById(id);
-        setVehicleData(data);
-      } catch (error) {
-        setLoadError(error.message);
-      } finally {
-        setInitialLoading(false);
-      }
-    };
-
-    if (isEditMode) {
-      loadVehicleData();
-    }
-  }, [id, isEditMode]);
+  // The useVehicleForm hook handles loading vehicle data internally
 
   const handleSave = async () => {
     await handleSubmit(
@@ -92,28 +70,12 @@ export default function AddEditVehiclePage() {
     { value: "semi-automatic", label: "Semi-Automatic" },
   ];
 
-  if (initialLoading) {
+  // Show loading state while the hook is fetching vehicle data in edit mode
+  if (isEditMode && loading && !formData.model && !submitError) {
     return (
       <div className="flex justify-center items-center h-96">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primaryDeep"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
         <span className="ml-4 text-lg font-medium">Loading vehicle data...</span>
-      </div>
-    );
-  }
-
-  if (loadError) {
-    return (
-      <div className="p-6">
-        <AlertMessage type="error" message={loadError} />
-        <button
-          onClick={() => navigate("/vehicles")}
-          className="mt-4 inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primaryDeep"
-        >
-          <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
-          </svg>
-          Back to Vehicles
-        </button>
       </div>
     );
   }
@@ -133,6 +95,21 @@ export default function AddEditVehiclePage() {
 
       {/* Error Alert */}
       {submitError && <AlertMessage type="error" message={submitError} />}
+
+      {/* Show error if vehicle data failed to load in edit mode */}
+      {isEditMode && submitError && submitError.includes('load vehicle data') && (
+        <div className="mb-4">
+          <button
+            onClick={() => navigate("/vehicles")}
+            className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          >
+            <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
+            </svg>
+            Back to Vehicles
+          </button>
+        </div>
+      )}
 
       {/* Main Form Card */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 w-full">
