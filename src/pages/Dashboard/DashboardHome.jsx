@@ -1,105 +1,84 @@
 import React from "react";
-import {
-  Box,
-  Typography,
-  Card,
-  CardContent,
-  Grid,
-} from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { useDashboardStats } from "../../hooks/useDashboardStats";
+import { DASHBOARD_CONFIG } from "../../config/dashboardConfig";
+import { DashboardHeader } from "../../components/Dashboard/DashboardHeader";
+import { StatsGrid } from "../../components/Dashboard/StatsGrid";
+import { InsightsPanel } from "../../components/Dashboard/InsightsPanel";
+import { QuickActionsPanel } from "../../components/Dashboard/QuickActionsPanel";
 
+/**
+ * DashboardHome - Main dashboard component following clean architecture principles
+ * 
+ * Responsibilities:
+ * - Coordinate UI components
+ * - Handle user interactions
+ * - Manage navigation
+ * 
+ * Architecture:
+ * - Uses custom hook for data management (useDashboardStats)
+ * - Utilizes configuration-based approach (dashboardConfig)
+ * - Separates UI concerns into dedicated components
+ */
 export default function DashboardHome() {
+  const navigate = useNavigate();
+  
+  // Use custom hook for state management and API calls
+  const { stats, insights, hasError, error } = useDashboardStats();
+
+  /**
+   * Handle navigation to specific pages
+   * @param {string} path - Navigation path
+   */
+  const handleNavigation = (path) => {
+    navigate(path);
+  };
+
+  /**
+   * Render error state
+   */
+  if (hasError) {
+    return (
+      <div className="min-h-screen bg-gray-50 p-6 flex items-center justify-center">
+        <div className="bg-white rounded-lg p-8 shadow-sm border border-gray-200 max-w-md w-full">
+          <div className="text-center">
+            <h2 className="text-xl font-semibold text-gray-900 mb-2">Error Loading Dashboard</h2>
+            <p className="text-gray-600 mb-4">{error}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Retry
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <Box sx={{ p: 3 }}>
-      {/* Header */}
-      <Box sx={{ mb: 3 }}>
-        <Typography variant="h4" component="h1" sx={{ fontWeight: "bold", mb: 1 }}>
-          Dashboard
-        </Typography>
-        <Typography variant="body1" color="textSecondary">
-          Welcome back! Here's an overview of your garage management system.
-        </Typography>
-      </Box>
+    <div className="min-h-screen bg-gray-50 p-6">
+      {/* Dashboard Header */}
+      <DashboardHeader />
 
-      {/* Stats Cards */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid item xs={12} sm={6} md={3}>
-          <Card sx={{ backgroundColor: "#3b82f6", color: "white" }}>
-            <CardContent>
-              <Typography color="inherit" gutterBottom sx={{ opacity: 0.9 }}>
-                Total Parts
-              </Typography>
-              <Typography variant="h4" component="div">
-                156
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <Card sx={{ backgroundColor: "#10b981", color: "white" }}>
-            <CardContent>
-              <Typography color="inherit" gutterBottom sx={{ opacity: 0.9 }}>
-                Active Orders
-              </Typography>
-              <Typography variant="h4" component="div">
-                23
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <Card sx={{ backgroundColor: "#f59e0b", color: "white" }}>
-            <CardContent>
-              <Typography color="inherit" gutterBottom sx={{ opacity: 0.9 }}>
-                Low Stock
-              </Typography>
-              <Typography variant="h4" component="div">
-                8
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <Card sx={{ backgroundColor: "#8b5cf6", color: "white" }}>
-            <CardContent>
-              <Typography color="inherit" gutterBottom sx={{ opacity: 0.9 }}>
-                Total Revenue
-              </Typography>
-              <Typography variant="h4" component="div">
-                $12.4k
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
+      {/* Statistics Grid */}
+      <StatsGrid
+        cards={DASHBOARD_CONFIG.STATS_CARDS}
+        stats={stats}
+        onCardClick={handleNavigation}
+      />
 
-      {/* Welcome Content */}
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={8}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" component="h2" sx={{ mb: 2 }}>
-                Recent Activity
-              </Typography>
-              <Typography variant="body1" color="textSecondary">
-                Your recent activity will appear here. This could include recent orders,
-                part updates, inventory changes, and more.
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12} md={4}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" component="h2" sx={{ mb: 2 }}>
-                Quick Actions
-              </Typography>
-              <Typography variant="body1" color="textSecondary">
-                Access your most commonly used features and tools from here.
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
-    </Box>
+      {/* Content Sections */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Insights Panel */}
+        <InsightsPanel
+          insights={insights.data}
+          loading={insights.loading}
+        />
+
+        {/* Quick Actions Panel */}
+        <QuickActionsPanel onActionClick={handleNavigation} />
+      </div>
+    </div>
   );
 }
