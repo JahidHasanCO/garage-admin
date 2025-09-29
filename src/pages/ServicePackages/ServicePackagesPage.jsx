@@ -24,6 +24,10 @@ const ServicePackagesPage = () => {
         refreshServicePackages
     } = useServicePackagesData();
 
+    console.log('ServicePackagesPage - servicePackages:', servicePackages);
+    console.log('ServicePackagesPage - loading:', loading);
+    console.log('ServicePackagesPage - error:', error);
+
     const [deleteDialog, setDeleteDialog] = useState({ open: false, servicePackage: null });
     const [snackbar, setSnackbar] = useState({
         open: false,

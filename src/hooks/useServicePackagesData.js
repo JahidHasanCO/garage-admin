@@ -33,8 +33,11 @@ export const useServicePackagesData = () => {
       setError(null);
       
       const response = await getAllServicePackages(page, limit, search);
+      console.log('Service Packages API Response:', response);
       
-      setServicePackages(response.servicePackages || response.data || []);
+      const packages = response.packages || response.servicePackages || response.data || [];
+      console.log('Extracted packages:', packages);
+      setServicePackages(packages);
       setPagination({
         page: response.page || 1,
         pages: response.pages || 1,
