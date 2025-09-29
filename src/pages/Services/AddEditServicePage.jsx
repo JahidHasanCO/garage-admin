@@ -15,9 +15,6 @@ const AddEditServicePage = () => {
   const { id } = useParams();
   const isEditing = !!id;
 
-  const [initialLoading, setInitialLoading] = useState(isEditing);
-  const [loadError, setLoadError] = useState(null);
-  const [serviceData, setServiceData] = useState(null);
   const [partsSelector, setPartsSelector] = useState({ open: false });
   const [selectedPartsDetails, setSelectedPartsDetails] = useState([]);
 
@@ -31,26 +28,10 @@ const AddEditServicePage = () => {
     handlePartsChange,
     handleSubmit,
     resetForm
-  } = useServiceForm(serviceData, id);
+  } = useServiceForm(id, null); // Pass id as first parameter, null as second
 
-  // Load existing service data for edit mode
-  useEffect(() => {
-    const loadServiceData = async () => {
-      if (isEditing && id) {
-        try {
-          setInitialLoading(true);
-          // Use the hook's built-in loading instead of separate API call
-          setServiceData({ _id: id });
-        } catch (error) {
-          setLoadError(error.message);
-        } finally {
-          setInitialLoading(false);
-        }
-      }
-    };
-
-    loadServiceData();
-  }, [id, isEditing]);
+  // The useServiceForm hook handles loading service data internally
+  // Remove the separate loading logic since the hook handles it
 
   // Fetch selected parts details when parts selection changes
   useEffect(() => {
@@ -123,28 +104,12 @@ const AddEditServicePage = () => {
     return selectedPartsDetails.reduce((total, part) => total + (part.price || 0), 0);
   };
 
-  if (initialLoading) {
+  // Show loading state while the hook is fetching service data in edit mode
+  if (isEditing && loading && !formData.name && !submitError) {
     return (
       <div className="flex justify-center items-center h-96">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primaryDeep"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
         <span className="ml-4 text-lg font-medium">Loading service data...</span>
-      </div>
-    );
-  }
-
-  if (loadError) {
-    return (
-      <div className="p-6">
-        <AlertMessage type="error" message={loadError} />
-        <button
-          onClick={() => navigate("/services")}
-          className="mt-4 inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primaryDeep"
-        >
-          <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
-          </svg>
-          Back to Services
-        </button>
       </div>
     );
   }
@@ -164,6 +129,21 @@ const AddEditServicePage = () => {
 
       {/* Error Alert */}
       {submitError && <AlertMessage type="error" message={submitError} />}
+
+      {/* Show error if service data failed to load in edit mode */}
+      {isEditing && submitError && submitError.includes('load service data') && (
+        <div className="mb-4">
+          <button
+            onClick={() => navigate("/services")}
+            className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          >
+            <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
+            </svg>
+            Back to Services
+          </button>
+        </div>
+      )}
 
       {/* Main Form Card */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 w-full">

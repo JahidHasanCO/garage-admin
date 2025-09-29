@@ -40,8 +40,15 @@ export const useServiceForm = (serviceId = null, initialData = null) => {
         // Fetch service data for editing
         try {
           setLoading(true);
+          setSubmitError(null);
+          console.log('Fetching service data for ID:', serviceId);
           const response = await getServiceById(serviceId);
-          const service = response.service || response;
+          console.log('Service data response:', response);
+          const service = response.service || response.data || response;
+          
+          if (!service) {
+            throw new Error('Service not found');
+          }
           
           setFormData({
             name: service.name || '',
@@ -55,9 +62,15 @@ export const useServiceForm = (serviceId = null, initialData = null) => {
             image: null,
             imagePreview: service.image || null
           });
+          
+          console.log('Form data initialized:', {
+            name: service.name,
+            description: service.description,
+            price: service.price
+          });
         } catch (err) {
           console.error('Error fetching service:', err);
-          setSubmitError('Failed to load service data');
+          setSubmitError(`Failed to load service data: ${err.message}`);
         } finally {
           setLoading(false);
         }
