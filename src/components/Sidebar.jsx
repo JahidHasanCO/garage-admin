@@ -103,7 +103,7 @@ export default function Sidebar() {
                   ${collapsed ? "justify-center" : "justify-start"}
                   ${
                     isSelected
-                      ? "bg-primary-400 text-white font-semibold"
+                      ? "bg-primary-500 text-white font-semibold"
                       : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                   }
                 `}

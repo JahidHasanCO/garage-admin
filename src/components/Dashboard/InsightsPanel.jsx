@@ -148,12 +148,12 @@ export const InsightsPanel = ({ insights, loading }) => {
   };
 
   return (
-    <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <div className="lg:col-span-2 bg-white rounded-xl shadow-sm p-6 border-r-2 border-b-2 border-blue-500">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-xl font-semibold text-gray-900">
           {DASHBOARD_CONFIG.TEXT.INSIGHTS_TITLE}
         </h2>
-        <ChartBarIcon className="w-6 h-6 text-gray-400" />
+        <ChartBarIcon className="w-6 h-6 text-blue-500" />
       </div>
       {renderInsightsContent()}
     </div>

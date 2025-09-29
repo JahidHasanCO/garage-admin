@@ -9,7 +9,7 @@ import { DASHBOARD_CONFIG } from '../../config/dashboardConfig';
  */
 export const QuickActionsPanel = ({ onActionClick }) => {
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <div className="bg-white rounded-xl shadow-sm p-6 border-r-2 border-b-2 border-green-500">
       <h2 className="text-xl font-semibold text-gray-900 mb-6">
         {DASHBOARD_CONFIG.TEXT.QUICK_ACTIONS_TITLE}
       </h2>

@@ -18,49 +18,70 @@ export const DASHBOARD_CONFIG = {
       key: 'parts',
       title: "Total Parts",
       icon: CubeIcon,
-      color: "bg-gradient-to-br from-blue-500 to-blue-600",
+      iconColor: "text-blue-500",
+      valueColor: "text-blue-600",
+      iconBgColor: "bg-blue-50",
+      borderColor: "border-blue-500",
       path: "/parts"
     },
     {
       key: 'vehicles',
       title: "Vehicles",
       icon: TruckIcon,
-      color: "bg-gradient-to-br from-green-500 to-green-600",
+      iconColor: "text-green-500",
+      valueColor: "text-green-600",
+      iconBgColor: "bg-green-50",
+      borderColor: "border-green-500",
       path: "/vehicles"
     },
     {
       key: 'garages',
       title: "Garages",
       icon: BuildingStorefrontIcon,
-      color: "bg-gradient-to-br from-purple-500 to-purple-600",
+      iconColor: "text-purple-500",
+      valueColor: "text-purple-600",
+      iconBgColor: "bg-purple-50",
+      borderColor: "border-purple-500",
       path: "/garages"
     },
     {
       key: 'services',
       title: "Services",
       icon: WrenchScrewdriverIcon,
-      color: "bg-gradient-to-br from-orange-500 to-orange-600",
+      iconColor: "text-orange-500",
+      valueColor: "text-orange-600",
+      iconBgColor: "bg-orange-50",
+      borderColor: "border-orange-500",
       path: "/services"
     },
     {
       key: 'servicePackages',
       title: "Service Packages",
       icon: RectangleStackIcon,
-      color: "bg-gradient-to-br from-indigo-500 to-indigo-600",
+      iconColor: "text-indigo-500",
+      valueColor: "text-indigo-600",
+      iconBgColor: "bg-indigo-50",
+      borderColor: "border-indigo-500",
       path: "/service-packages"
     },
     {
       key: 'manufacturers',
       title: "Manufacturers",
       icon: BuildingOffice2Icon,
-      color: "bg-gradient-to-br from-teal-500 to-teal-600",
+      iconColor: "text-teal-500",
+      valueColor: "text-teal-600",
+      iconBgColor: "bg-teal-50",
+      borderColor: "border-teal-500",
       path: "/manufacturers"
     },
     {
       key: 'fuelTypes',
       title: "Fuel Types",
       icon: FireIcon,
-      color: "bg-gradient-to-br from-red-500 to-red-600",
+      iconColor: "text-red-500",
+      valueColor: "text-red-600",
+      iconBgColor: "bg-red-50",
+      borderColor: "border-red-500",
       path: "/fuel-types"
     }
   ],

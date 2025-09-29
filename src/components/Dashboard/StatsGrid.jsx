@@ -15,25 +15,25 @@ export const StatCard = ({ card, stats, onClick }) => {
   return (
     <div
       onClick={() => onClick(card.path)}
-      className={`${card.color} rounded-xl p-6 text-white shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 cursor-pointer group`}
+      className={`bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 cursor-pointer group border-r-2 border-b-2 ${card.borderColor}`}
     >
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-white/80 text-sm font-medium mb-1">{card.title}</p>
+          <p className="text-gray-900 text-sm font-medium mb-1">{card.title}</p>
           <div className="flex items-center space-x-2">
             {cardStats.loading ? (
-              <div className="animate-pulse bg-white/30 h-8 w-16 rounded"></div>
+              <div className="animate-pulse bg-gray-300 h-8 w-16 rounded"></div>
             ) : (
-              <p className="text-3xl font-bold">{cardStats.count.toLocaleString()}</p>
+              <p className={`text-3xl font-bold ${card.valueColor}`}>{cardStats.count.toLocaleString()}</p>
             )}
-            <ArrowUpIcon className="w-4 h-4 text-white/60" />
+            <ArrowUpIcon className={`w-4 h-4 ${card.iconColor}`} />
           </div>
         </div>
-        <div className="bg-white/20 p-3 rounded-lg group-hover:bg-white/30 transition-colors">
-          <Icon className="w-8 h-8" />
+        <div className={`${card.iconBgColor} p-3 rounded-lg group-hover:opacity-80 transition-opacity`}>
+          <Icon className={`w-8 h-8 ${card.iconColor}`} />
         </div>
       </div>
-      <div className="mt-4 flex items-center text-white/80 text-sm">
+      <div className="mt-4 flex items-center text-gray-600 text-sm">
         <span>View all</span>
         <ArrowRightIcon className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
       </div>
