@@ -3,7 +3,7 @@ import Button from "../../components/Button";
 import SearchBar from "../../components/SearchBar";
 import { PlusIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
 
-const StaffsTable = ({ staffs, loading, searchQuery, deleteLoading, onEdit, onDelete, onAddStaff, onSearch }) => {
+const StaffsTable = ({ staffs, loading, searchQuery, deleteLoading, onEdit, onDelete, onAddStaff }) => {
   const formatDate = (dateString) => new Date(dateString).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
 
   return (
@@ -15,7 +15,6 @@ const StaffsTable = ({ staffs, loading, searchQuery, deleteLoading, onEdit, onDe
             {searchQuery && <p className="text-sm text-gray-700 mt-1">Search results for: "{searchQuery}"</p>}
           </div>
           <div className="flex items-center gap-3">
-            <SearchBar placeholder="Search staff..." value={searchQuery} onChange={onSearch} />
             <Button text="Add Staff" variant="outlined" startIcon={<PlusIcon className="w-5 h-5" />} onClick={onAddStaff} fullWidth={false} />
           </div>
         </div>

@@ -11,7 +11,6 @@ const GaragesTable = ({
   onEdit,
   onDelete,
   onAddGarage,
-  onSearch,
 }) => {
   const formatDate = (dateString) =>
     new Date(dateString).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
@@ -45,11 +44,6 @@ const GaragesTable = ({
             )}
           </div>
           <div className="flex items-center gap-3">
-            <SearchBar
-              placeholder="Search garages..."
-              value={searchQuery}
-              onChange={onSearch}
-            />
             <Button
               text="Add Garage"
               variant="outlined"
