@@ -22,6 +22,9 @@
     GARAGES: "/garages",
     GARAGES_ADD: "/garages/add",
     GARAGES_EDIT: "/garages/edit/:id",
+    STAFF: "/staff",
+    STAFF_ADD: "/staff/add",
+    STAFF_EDIT: "/staff/edit/:id",
 };
 
 // Legacy export for backward compatibility

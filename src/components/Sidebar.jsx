@@ -55,6 +55,11 @@ const menuItems = [
     icon: <BuildingStorefrontIcon className="w-6 h-6" />,
     path: "/garages",
   },
+  {
+    text: "Staff",
+    icon: <WrenchScrewdriverIcon className="w-6 h-6" />,
+    path: "/staff",
+  },
 ];
 
 export default function Sidebar() {
