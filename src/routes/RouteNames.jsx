@@ -25,6 +25,9 @@
     STAFF: "/staff",
     STAFF_ADD: "/staff/add",
     STAFF_EDIT: "/staff/edit/:id",
+    BOOKINGS: "/bookings",
+    BOOKINGS_ADD: "/bookings/add",
+    BOOKINGS_EDIT: "/bookings/edit/:id",
 };
 
 // Legacy export for backward compatibility

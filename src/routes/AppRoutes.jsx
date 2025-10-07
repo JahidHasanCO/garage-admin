@@ -18,6 +18,8 @@ import GaragesPage from "../pages/Garages/GaragesPage";
 import AddEditGaragePage from "../pages/Garages/AddEditGaragePage";
 import StaffsPage from "../pages/Staff/StaffsPage";
 import AddEditStaffPage from "../pages/Staff/AddEditStaffPage";
+import BookingsPage from "../pages/Bookings/BookingsPage";
+import AddEditBookingPage from "../pages/Bookings/AddEditBookingPage";
 import { useAuth } from "../contexts/useAuthContext";
 import { RouteNames } from "./RouteNames";
 
@@ -99,6 +101,14 @@ export default function AppRoutes() {
         <Route index element={<StaffsPage />} />
         <Route path="add" element={<AddEditStaffPage />} />
         <Route path="edit/:id" element={<AddEditStaffPage />} />
+      </Route>
+      <Route
+        path={RouteNames.BOOKINGS}
+        element={token ? <DashboardLayout /> : <Navigate to={RouteNames.LOGIN} replace />}
+      >
+        <Route index element={<BookingsPage />} />
+        <Route path="add" element={<AddEditBookingPage />} />
+        <Route path="edit/:id" element={<AddEditBookingPage />} />
       </Route>
       <Route path="/" element={<Navigate to={RouteNames.DASHBOARD} replace />} />
       <Route path="*" element={<div>404 Not Found</div>} />

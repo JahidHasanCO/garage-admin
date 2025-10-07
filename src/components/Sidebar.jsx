@@ -56,6 +56,11 @@ const menuItems = [
     path: "/garages",
   },
   {
+    text: "Bookings",
+    icon: <RectangleStackIcon className="w-6 h-6" />,
+    path: "/bookings",
+  },
+  {
     text: "Staff",
     icon: <WrenchScrewdriverIcon className="w-6 h-6" />,
     path: "/staff",
